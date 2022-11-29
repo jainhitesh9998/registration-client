@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.*?>
-<?import javafx.geometry.*?>
-<?import javafx.embed.swing.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="616.0" styleClass="scanPage" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mosip.registration.controller.device.ScanPopUpViewController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="616.0" styleClass="scanPage" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mosip.registration.controller.device.ScanPopUpViewController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="100.0" />
   </columnConstraints>
@@ -90,11 +92,11 @@
                                       <RowConstraints percentHeight="100.0" />
                                     </rowConstraints>
                                      <children>
-                                         <ScrollPane fx:id="docPreviewScrollPane" fitToWidth="false" fitToHeight="false">
+                                         <ScrollPane fx:id="docPreviewScrollPane" fitToHeight="false" fitToWidth="false">
                                          <StackPane fx:id="groupStackPane" alignment="CENTER">
-                                             <Group fx:id="imageGroup" >
+                                             <Group fx:id="imageGroup">
                                                  <children>
-                                                     <ImageView fx:id="scanImage" pickOnBounds="true" preserveRatio="true"/>
+                                                     <ImageView fx:id="scanImage" pickOnBounds="true" preserveRatio="true" />
                                                  </children>
                                              </Group>
                                          </StackPane>
@@ -173,6 +175,7 @@
                                  </graphic>
                               </Button>
                               <Text fx:id="scanningMsg" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alertContext" GridPane.rowIndex="6" />
+                              <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="92.0" text="Process" styleClass="scanButton" GridPane.rowIndex="6" />
                            </children>
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />

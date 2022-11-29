@@ -398,6 +398,7 @@ public class DaoConfig extends HibernateDaoConfig {
 	}
 
 	private boolean createDb(String dbPath) throws RegBaseCheckedException {
+		LOGGER.info(Paths.get(dbPath).toString());
 		if (!Files.isDirectory(Paths.get(dbPath)) && isDBInitializeRequired())
 			return true;
 
@@ -495,6 +496,7 @@ public class DaoConfig extends HibernateDaoConfig {
 			dbConf.append(ERROR_STATE); // states if successful db conf. 1 = SAFE_STATE, 0 = ERROR_STATE
 			saveDbConf(dbConf.toString());
 		}
+		LOGGER.info("Path  of mosipkeys {}", path);
 		return parseDbConf(Files.readAllBytes(path));
 	}
 

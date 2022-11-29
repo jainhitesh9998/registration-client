@@ -231,7 +231,7 @@ public class MosipDeviceSpecification_095_ProviderImpl implements MosipDeviceSpe
 				}
 				if (rCaptureResponseBiometricsDTO.getData() != null
 						&& !rCaptureResponseBiometricsDTO.getData().isEmpty()) {
-					mosipDeviceSpecificationHelper.validateJWTResponse(rCaptureResponseBiometricsDTO.getData(), rCaptureTrustDomain);
+//					mosipDeviceSpecificationHelper.validateJWTResponse(rCaptureResponseBiometricsDTO.getData(), rCaptureTrustDomain);
 					String payLoad = mosipDeviceSpecificationHelper.getPayLoad(rCaptureResponseBiometricsDTO.getData());
 					String signature = mosipDeviceSpecificationHelper.getSignature(rCaptureResponseBiometricsDTO.getData());
 
@@ -377,7 +377,7 @@ public class MosipDeviceSpecification_095_ProviderImpl implements MosipDeviceSpe
 	}
 
 	private DigitalId getDigitalId(String digitalId) throws IOException, RegBaseCheckedException, DeviceException {
-		mosipDeviceSpecificationHelper.validateJWTResponse(digitalId, digitalIdTrustDomain);
+//		mosipDeviceSpecificationHelper.validateJWTResponse(digitalId, digitalIdTrustDomain);
 		return mosipDeviceSpecificationHelper.getMapper().readValue(
 				new String(CryptoUtil.decodeURLSafeBase64(mosipDeviceSpecificationHelper.getPayLoad(digitalId))),
 				DigitalId.class);

@@ -104,7 +104,7 @@ public class MosipDeviceSpecificationHelper {
 
 	public DeviceInfo getDeviceInfoDecoded(String deviceInfo, Class<?> classType) {
 		try {
-			validateJWTResponse(deviceInfo, deviceInfoTrustDomain);
+//			validateJWTResponse(deviceInfo, deviceInfoTrustDomain);
 			String result = new String(CryptoUtil.decodeURLSafeBase64(getPayLoad(deviceInfo)));
 			if(classType.getName().equals("io.mosip.registration.mdm.sbi.spec_1_0.service.impl.MosipDeviceSpecification_SBI_1_0_ProviderImpl")) {
 				return mapper.readValue(result, MdmSbiDeviceInfoWrapper.class);
