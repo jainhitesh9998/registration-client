@@ -4,6 +4,7 @@ import static io.mosip.registration.constants.RegistrationConstants.EMPTY;
 import static io.mosip.registration.constants.RegistrationConstants.HASH;
 import static io.mosip.registration.constants.RegistrationConstants.REG_AUTH_PAGE;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,6 +58,7 @@ import io.mosip.registration.util.control.impl.TextFieldFxControl;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -67,6 +69,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -78,6 +81,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -123,6 +127,18 @@ public class GenericController extends BaseController {
 
 	@FXML
 	private AnchorPane navigationAnchorPane;
+
+	/** Step rail of the registration wizard; optional (layouts without it keep the visible tab headers). */
+	@FXML
+	private VBox stepRail;
+
+	private static final String STEP_TABS_CLASS = "stepTabs";
+	private static final String STEP_ITEM_CLASS = "stepItem";
+	private static final String STEP_CURRENT_CLASS = "stepCurrent";
+	private static final String STEP_COMPLETED_CLASS = "stepCompleted";
+	private static final String STEP_DISABLED_CLASS = "stepDisabled";
+	private static final String STEP_ERROR_CLASS = "stepError";
+	private static final String STEP_PROGRESS_KEY = "stepProgress";
 
 	@FXML
 	private Button next;
@@ -707,13 +723,116 @@ public class GenericController extends BaseController {
 		TabPane tabPane = new TabPane();
 		tabPane.setId(getRegistrationDTOFromSession().getRegistrationId());
 		tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-		tabPane.prefWidthProperty().bind(anchorPane.widthProperty());
-		tabPane.prefHeightProperty().bind(anchorPane.heightProperty());
+		// Fill the wizard card through anchors. Binding the pref size to the card's size feeds back into the
+		// card's own min size (AnchorPane uses an un-anchored child's pref size), so it grew on every layout pass.
+		AnchorPane.setTopAnchor(tabPane, 0.0);
+		AnchorPane.setRightAnchor(tabPane, 0.0);
+		AnchorPane.setBottomAnchor(tabPane, 0.0);
+		AnchorPane.setLeftAnchor(tabPane, 0.0);
+		tabPane.setMinSize(0, 0);
 
 		setTabSelectionChangeEventHandler(tabPane);
 		anchorPane.getChildren().add(tabPane);
 		addNavigationButtons(processSpecDto);
 		return tabPane;
+	}
+
+	/**
+	 * Builds the wizard step rail from the tabs of the process (whatever screens the process / UI spec defines,
+	 * plus preview and authentication). The TabPane stays the single source of truth: a click on a step selects
+	 * its tab, so the existing selection handler still validates and may veto the move; the rail only reflects
+	 * the TabPane state (selection, disabled tabs, tabs flagged with errors). Rebuilt if the tab list changes.
+	 */
+	private void buildStepRail(TabPane tabPane) {
+		if (stepRail == null || tabPane == null) {
+			return;
+		}
+		if (!tabPane.getStyleClass().contains(STEP_TABS_CLASS)) {
+			tabPane.getStyleClass().add(STEP_TABS_CLASS);
+			tabPane.getTabs().addListener((ListChangeListener<Tab>) change -> buildStepRail(tabPane));
+			tabPane.getSelectionModel().selectedIndexProperty()
+					.addListener((observable, oldValue, newValue) -> refreshStepRail(tabPane));
+		}
+
+		stepRail.getChildren().clear();
+		VBox steps = new VBox();
+		steps.getStyleClass().add("stepList");
+		for (int index = 0; index < tabPane.getTabs().size(); index++) {
+			Tab tab = tabPane.getTabs().get(index);
+			Label badge = new Label(String.valueOf(index + 1));
+			badge.getStyleClass().add("stepBadge");
+			badge.setMinWidth(Region.USE_PREF_SIZE);
+			Label title = new Label();
+			title.textProperty().bind(tab.textProperty());
+			title.setWrapText(true);
+			title.getStyleClass().add("stepTitle");
+			HBox item = new HBox(badge, title);
+			item.setAlignment(Pos.CENTER_LEFT);
+			item.getStyleClass().add(STEP_ITEM_CLASS);
+			item.setUserData(tab);
+			item.setOnMouseClicked(event -> {
+				if (!tab.isDisabled()) {
+					tabPane.getSelectionModel().select(tab);
+				}
+			});
+			if (tab.getProperties().putIfAbsent(STEP_ITEM_CLASS, Boolean.TRUE) == null) {
+				tab.disableProperty().addListener((observable, oldValue, newValue) -> refreshStepRail(tabPane));
+				tab.getStyleClass().addListener((ListChangeListener<String>) change -> refreshStepRail(tabPane));
+			}
+			steps.getChildren().add(item);
+		}
+		ProgressBar progress = new ProgressBar(0);
+		progress.setMaxWidth(Double.MAX_VALUE);
+		progress.getStyleClass().add("stepProgressBar");
+		Label progressLabel = new Label();
+		progressLabel.getStyleClass().add("stepProgressLabel");
+		stepRail.getChildren().addAll(steps, progress, progressLabel);
+		refreshStepRail(tabPane);
+	}
+
+	private void refreshStepRail(TabPane tabPane) {
+		if (stepRail == null || stepRail.getChildren().size() < 3) {
+			return;
+		}
+		VBox steps = (VBox) stepRail.getChildren().get(0);
+		int count = tabPane.getTabs().size();
+		int selected = tabPane.getSelectionModel().getSelectedIndex();
+		for (Node node : steps.getChildren()) {
+			if (!(node instanceof HBox) || !(node.getUserData() instanceof Tab)) {
+				continue;
+			}
+			Tab tab = (Tab) node.getUserData();
+			int index = tabPane.getTabs().indexOf(tab);
+			node.getStyleClass().removeAll(STEP_CURRENT_CLASS, STEP_COMPLETED_CLASS, STEP_DISABLED_CLASS, STEP_ERROR_CLASS);
+			Label badge = (Label) ((HBox) node).getChildren().get(0);
+			badge.setText(String.valueOf(index + 1));
+			if (index == selected) {
+				node.getStyleClass().add(STEP_CURRENT_CLASS);
+			} else if (index >= 0 && index < selected) {
+				node.getStyleClass().add(STEP_COMPLETED_CLASS);
+				badge.setText("\u2713");
+			}
+			if (tab.isDisabled()) {
+				// a step switched off by the process rules is skipped, not completed
+				node.getStyleClass().remove(STEP_COMPLETED_CLASS);
+				node.getStyleClass().add(STEP_DISABLED_CLASS);
+				badge.setText("\u2013");
+			}
+			if (tab.getStyleClass().contains(TAB_LABEL_ERROR_CLASS)) {
+				node.getStyleClass().add(STEP_ERROR_CLASS);
+				badge.setText("!");
+			}
+		}
+		ProgressBar progress = (ProgressBar) stepRail.getChildren().get(1);
+		Label progressLabel = (Label) stepRail.getChildren().get(2);
+		int position = Math.max(selected, 0) + 1;
+		progress.setProgress(count <= 1 ? 1.0 : (double) (position - 1) / (count - 1));
+		String pattern = ApplicationContext.getBundle(ApplicationContext.applicationLanguage(), RegistrationConstants.LABELS)
+				.containsKey(STEP_PROGRESS_KEY)
+						? ApplicationContext.getBundle(ApplicationContext.applicationLanguage(), RegistrationConstants.LABELS)
+								.getString(STEP_PROGRESS_KEY)
+						: "{0} / {1}";
+		progressLabel.setText(MessageFormat.format(pattern, position, count));
 	}
 
 	public void populateScreens() throws Exception {
@@ -790,6 +909,7 @@ public class GenericController extends BaseController {
 		//refresh to reflect the initial visibility configuration
 		refreshFields();
 		addPreviewAndAuthScreen(tabPane);
+		buildStepRail(tabPane);
 	}
 
 

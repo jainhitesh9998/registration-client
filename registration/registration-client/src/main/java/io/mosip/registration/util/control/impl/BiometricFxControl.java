@@ -137,7 +137,7 @@ public class BiometricFxControl extends FxControl {
 		label.getStyleClass().add(RegistrationConstants.QUALITY_BOX_LABEL);
 
 		GridPane gridPane = createGridPane();
-		gridPane.setHgap(24);
+		gridPane.setHgap("compact".equals(getBiometricFieldLayout()) ? 0 : 24);
 		gridPane.setId(fieldName);
 		gridPane.add(label,1,0);
 		GridPane.setHalignment(label, HPos.LEFT);
@@ -196,8 +196,10 @@ public class BiometricFxControl extends FxControl {
 		midRowConstraints.setPercentHeight(95);
 		gridPane.getRowConstraints().addAll(topRowConstraints,midRowConstraints);
 
-		// fixed-width modality rail, capture panel next to it (no dead gap between them)
-		ColumnConstraints columnConstraint1 = new ColumnConstraints(152, 152, 152);
+		// inline layout: fixed-width modality rail with the capture panel next to it (no dead gap between them);
+		// compact layout: no rail, the modality tiles start at the field's left edge like every other field
+		double railWidth = "compact".equals(getBiometricFieldLayout()) ? 0 : 152;
+		ColumnConstraints columnConstraint1 = new ColumnConstraints(railWidth, railWidth, railWidth);
 		ColumnConstraints columnConstraint2 = new ColumnConstraints();
 		columnConstraint2.setHgrow(Priority.ALWAYS);
 		ColumnConstraints columnConstraint3 = new ColumnConstraints(0, 0, 0);
@@ -362,7 +364,11 @@ public class BiometricFxControl extends FxControl {
 			this.node.setVisible(true);
 			this.node.setManaged(true);
 
-			scanForModality(this.control, this.currentModality);
+			// The compact layout captures in a popup that must only open when the operator picks a modality;
+			// the inline layout re-renders its embedded capture pane for the current modality.
+			if (!"compact".equals(getBiometricFieldLayout())) {
+				scanForModality(this.control, this.currentModality);
+			}
 		}
 
 		List<String> requiredAttributes = requiredFieldValidator.getRequiredBioAttributes(uiFieldDTO, getRegistrationDTo());

@@ -4320,3 +4320,165 @@ Working on new Css by taleev
 #saveToDevice:hover {
 	-fx-background-color: -mx-primary-soft;
 }
+
+/* ==========================================================================
+   Registration wizard: step rail (GenericController.buildStepRail)
+   ========================================================================== */
+.registrationShell {
+	-fx-padding: 0 32 0 32;
+	-fx-hgap: 24;
+}
+
+.tab-pane.stepTabs > .tab-header-area {
+	-fx-pref-height: 0;
+	-fx-min-height: 0;
+	-fx-max-height: 0;
+	-fx-padding: 0;
+	visibility: hidden;
+}
+
+.tab-pane.stepTabs > .tab-content-area {
+	-fx-padding: 0;
+}
+
+.stepRail {
+	-fx-background-color: -mx-surface;
+	-fx-background-radius: 14;
+	-fx-border-color: -mx-border-subtle;
+	-fx-border-radius: 14;
+	-fx-padding: 12 12 16 12;
+	-fx-spacing: 12;
+}
+
+.stepList {
+	-fx-spacing: 2;
+}
+
+.stepItem {
+	-fx-padding: 10 12 10 12;
+	-fx-spacing: 12;
+	-fx-background-radius: 10;
+	-fx-cursor: hand;
+}
+
+.stepItem:hover {
+	-fx-background-color: -mx-surface-muted;
+}
+
+.stepBadge {
+	-fx-min-width: 26px;
+	-fx-min-height: 26px;
+	-fx-max-width: 26px;
+	-fx-max-height: 26px;
+	-fx-alignment: center;
+	-fx-background-color: -mx-border-strong, -mx-surface;
+	-fx-background-insets: 0, 1;
+	-fx-background-radius: 13, 12;
+	-fx-text-fill: -mx-text-secondary;
+	-fx-font-size: 12px;
+}
+
+.stepTitle {
+	-fx-font-size: 14px;
+	-fx-text-fill: -mx-text-secondary;
+}
+
+.stepItem.stepCurrent {
+	-fx-background-color: -mx-primary-soft;
+}
+
+.stepItem.stepCurrent .stepBadge {
+	-fx-background-color: -mx-primary, -mx-primary;
+	-fx-text-fill: #FFFFFF;
+	-fx-font-family: 'Noto Sans SemiBold';
+}
+
+.stepItem.stepCurrent .stepTitle {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-text-fill: -mx-primary-pressed;
+}
+
+.stepItem.stepCompleted .stepBadge {
+	-fx-background-color: -mx-success, -mx-success;
+	-fx-text-fill: #FFFFFF;
+}
+
+.stepItem.stepCompleted .stepTitle {
+	-fx-text-fill: -mx-text;
+}
+
+.stepItem.stepError .stepBadge {
+	-fx-background-color: -mx-danger, -mx-danger;
+	-fx-text-fill: #FFFFFF;
+}
+
+.stepItem.stepError .stepTitle {
+	-fx-text-fill: -mx-danger;
+}
+
+.stepItem.stepDisabled {
+	-fx-opacity: 0.45;
+	-fx-cursor: default;
+}
+
+.stepProgressBar {
+	-fx-padding: 0 12 0 12;
+	-fx-pref-height: 6px;
+}
+
+.stepProgressBar > .track {
+	-fx-background-color: -mx-surface-sunken;
+	-fx-background-radius: 3;
+}
+
+.stepProgressBar > .bar {
+	-fx-background-radius: 3;
+	-fx-background-insets: 0;
+}
+
+.stepProgressLabel {
+	-fx-padding: 0 12 0 12;
+	-fx-font-size: 12px;
+	-fx-text-fill: #5C5C66;
+}
+
+/* field slots for the 992px wizard content column: three per row */
+.demoGraphicTextField,
+.demoGraphicTextFieldOnType,
+.demoGraphicTextFieldFocused,
+.uinUpdateTextFiledStyle,
+.preregFetchBtnStyle {
+	-fx-pref-width: 252px;
+	-fx-min-width: 252px;
+	-fx-max-width: 252px;
+}
+
+.demographicCombobox,
+.demographicComboboxFocused,
+.documentCombobox {
+	-fx-pref-width: 296px;
+	-fx-min-width: 296px;
+	-fx-max-width: 296px;
+}
+
+.dobFieldGroup .demoGraphicTextField,
+.dobFieldGroup .demoGraphicTextFieldOnType,
+.dobFieldGroup .demoGraphicTextFieldFocused {
+	-fx-pref-width: 72px;
+	-fx-min-width: 72px;
+	-fx-max-width: 72px;
+}
+
+.residence,
+.selectedResidence,
+.genderButton,
+.genderSelectedButton {
+	-fx-pref-width: 120px;
+	-fx-min-width: 120px;
+	-fx-max-width: 120px;
+}
+
+/* pre-registration fetch: never truncate the action */
+#fetchBtn {
+	-fx-min-width: 140px;
+}

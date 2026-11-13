@@ -4,22 +4,27 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!-- Registration flow shell (GenericController). Same fx:ids / node types as before:
-     row 0 page title (navigationAnchorPane), row 1 content card (anchorPane, hosts the step TabPane),
-     row 2 action bar (footerGridPane: status message left, primary action right). -->
+<!-- Registration flow (GenericController). A centred 1280px column: page title, step rail + content card,
+     action bar. The flex columns either side absorb extra width. The step rail (optional) is built from the
+     process tabs by GenericController; when it is present the tab headers are hidden and the rail drives the
+     TabPane. Same fx:ids / node types as before (stepRail is new and optional). -->
 <GridPane fx:id="genericScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1530.0" prefWidth="800.0" styleClass="parentPane, registrationShell" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mosip.registration.controller.GenericController">
    <rowConstraints>
-      <RowConstraints percentHeight="7.0" valignment="CENTER" />
-      <RowConstraints percentHeight="85.0" />
+      <RowConstraints percentHeight="9.0" valignment="CENTER" />
+      <RowConstraints percentHeight="83.0" />
       <RowConstraints percentHeight="8.0" valignment="CENTER" />
    </rowConstraints>
    <columnConstraints>
-      <ColumnConstraints percentWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="0.0" />
+      <ColumnConstraints hgrow="NEVER" maxWidth="264.0" minWidth="264.0" prefWidth="264.0" />
+      <ColumnConstraints hgrow="NEVER" maxWidth="992.0" minWidth="480.0" prefWidth="992.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="0.0" />
    </columnConstraints>
    <children>
-      <AnchorPane fx:id="navigationAnchorPane" styleClass="registrationTitleBar" GridPane.rowIndex="0" />
-      <AnchorPane fx:id="anchorPane" prefHeight="500.0" prefWidth="500.0" styleClass="paneAtDisplayDemoGraphic, registrationCard" GridPane.rowIndex="1" />
-      <GridPane fx:id="footerGridPane" alignment="CENTER_LEFT" styleClass="registrationActionBar" GridPane.rowIndex="2">
+      <AnchorPane fx:id="navigationAnchorPane" styleClass="registrationTitleBar" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+      <VBox fx:id="stepRail" maxHeight="-Infinity" styleClass="stepRail" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+      <AnchorPane fx:id="anchorPane" prefHeight="500.0" prefWidth="500.0" styleClass="paneAtDisplayDemoGraphic, registrationCard" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <GridPane fx:id="footerGridPane" alignment="CENTER_LEFT" styleClass="registrationActionBar" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
          <columnConstraints>
             <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
             <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />

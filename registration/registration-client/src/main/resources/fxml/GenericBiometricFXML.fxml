@@ -156,12 +156,15 @@
                                                 <Label styleClass="exceptionLabel" text="%exceptions" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                                                 <Label fx:id="thresholdScoreLabel" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                                                 <Label fx:id="qualityScore" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                                                <Label styleClass="sdkQualityLabel" text="%sdkQuality" GridPane.columnIndex="2" GridPane.halignment="LEFT" />
+                                                <Label fx:id="sdkQualityText" styleClass="sdkQualityText" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                                                 <Label fx:id="attemptSlap" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                                 <Label GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                              </children>
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="35.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="35.0" prefWidth="100.0" />
                                              </columnConstraints>
                                              <rowConstraints>
                                                 <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
