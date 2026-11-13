@@ -269,6 +269,7 @@ public class RegistrationUIConstants {
 	public static final String IRIS_SCANNING_ERROR = "IRIS_SCANNING_ERROR";
 	public static final String FINGERPRINT_SCANNING_ERROR = "FINGERPRINT_SCANNING_ERROR";
 	public static final String NO_DEVICE_FOUND = "NO_DEVICE_FOUND";
+	public static final String BIOMETRIC_LOGIN_NOT_ENROLLED = "BIOMETRIC_LOGIN_NOT_ENROLLED";
 	public static final String FINGERPRINT_SELECTION_PANE_ALERT = "FINGERPRINT_SELECTION_PANE_ALERT";
 	public static final String FINGERPRINT_SCAN_ALERT = "FINGERPRINT_SCAN_ALERT";
 	public static final String IRIS_VALIDATION_ERROR = "IRIS_VALIDATION_ERROR";

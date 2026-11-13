@@ -52,6 +52,8 @@ import io.mosip.registration.exception.RegBaseUncheckedException;
 import io.mosip.registration.scheduler.SchedulerUtil;
 import io.mosip.registration.service.bio.BioService;
 import io.mosip.registration.service.login.LoginService;
+import io.mosip.registration.dao.UserDetailDAO;
+import io.mosip.kernel.biometrics.constant.BiometricType;
 import io.mosip.registration.dto.RegistrationCenterDetailDTO;
 import io.mosip.registration.util.healthcheck.RegistrationSystemPropertiesChecker;
 import io.mosip.registration.service.operator.UserMachineMappingService;
@@ -210,6 +212,9 @@ public class LoginController extends BaseController implements Initializable {
 
 	@Autowired
 	private LoginService loginService;
+
+	@Autowired
+	private UserDetailDAO userDetailDAO;
 
 	@Autowired
 	private OTPManager otpGenerator;
@@ -690,6 +695,9 @@ public class LoginController extends BaseController implements Initializable {
 				"Capturing finger print for validation");
 
 		UserDTO userDTO = loginService.getUserDetail(userId.getText());
+		if (!isBiometricEnrolled(userId.getText(), BiometricType.FINGER)) {
+			return;
+		}
 
 		AuthenticationValidatorDTO authenticationValidatorDTO = new AuthenticationValidatorDTO();
 		authenticationValidatorDTO.setUserId(userId.getText());
@@ -713,6 +721,9 @@ public class LoginController extends BaseController implements Initializable {
 				"Capturing the iris for validation");
 
 		UserDTO userDTO = loginService.getUserDetail(userId.getText());
+		if (!isBiometricEnrolled(userId.getText(), BiometricType.IRIS)) {
+			return;
+		}
 
 		AuthenticationValidatorDTO authenticationValidatorDTO = new AuthenticationValidatorDTO();
 		authenticationValidatorDTO.setUserId(userId.getText());
@@ -735,12 +746,34 @@ public class LoginController extends BaseController implements Initializable {
 		LOGGER.info(LoggerConstants.LOG_REG_LOGIN, APPLICATION_NAME, APPLICATION_ID, "Capturing face for validation");
 
 		UserDTO userDTO = loginService.getUserDetail(userId.getText());
+		if (!isBiometricEnrolled(userId.getText(), BiometricType.FACE)) {
+			return;
+		}
 
 		AuthenticationValidatorDTO authenticationValidatorDTO = new AuthenticationValidatorDTO();
 		authenticationValidatorDTO.setUserId(userId.getText());
 
 		executeValidationTask(userDTO, RegistrationConstants.FACE, false, false, authenticationValidatorDTO, facePane,
 				faceProgressIndicator, RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.FACE_MATCH), RegistrationConstants.FACE);
+	}
+
+	/**
+	 * Biometric login compares the capture with the templates enrolled for this operator on this machine (operator
+	 * onboarding). Without templates for the modality the step can never succeed, so say so instead of scanning and
+	 * reporting a non-match; this is not a failed authentication and is not counted towards the lock.
+	 */
+	private boolean isBiometricEnrolled(String operatorId, BiometricType biometricType) {
+		try {
+			if (!userDetailDAO.getUserSpecificBioDetails(operatorId, biometricType.value()).isEmpty()) {
+				return true;
+			}
+		} catch (RuntimeException exception) {
+			LOGGER.error("Unable to read enrolled {} biometrics of the operator", biometricType.value(), exception);
+		}
+		LOGGER.info("No {} biometrics enrolled for the operator; login step cannot be verified", biometricType.value());
+		generateAlert(RegistrationConstants.ERROR,
+				RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.BIOMETRIC_LOGIN_NOT_ENROLLED));
+		return false;
 	}
 
 	private void executeValidationTask(UserDTO userDTO, String loginMethod, boolean isInitialSetUp,
