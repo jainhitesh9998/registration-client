@@ -180,6 +180,14 @@ public abstract class FxControl  {
 	 *
 	 * @return
 	 */
+	/**
+	 * Why {@link #canContinue()} is false, in words the operator can act on, when the field can tell more than its
+	 * label (e.g. a missing exception photo). Null to report the field label.
+	 */
+	public String getInvalidReason() {
+		return null;
+	}
+
 	public boolean canContinue() {
 		//field is not visible, ignoring valid value and isRequired check
 		if(!isFieldVisible(this.uiFieldDTO)) {

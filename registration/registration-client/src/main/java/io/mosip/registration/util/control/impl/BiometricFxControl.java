@@ -454,6 +454,10 @@ public class BiometricFxControl extends FxControl {
 		if(exceptionPhotoNode != null) {
 			exceptionPhotoNode.setVisible(exceptionExists);
 			exceptionPhotoNode.setManaged(exceptionExists);
+			if (exceptionExists && currentModality != null) {
+				// status mark (warning until the photo is captured) as soon as the tile appears
+				addRemoveCaptureStatusMark(exceptionPhotoNode, Modality.EXCEPTION_PHOTO);
+			}
 			exceptionPhotoNode.getChildren().forEach( child -> {
 				child.setVisible(exceptionExists);
 				child.setManaged(exceptionExists);
@@ -487,9 +491,28 @@ public class BiometricFxControl extends FxControl {
 		displayExceptionPhoto();
 	}
 
+	@Override
+	public String getInvalidReason() {
+		boolean exceptionExists = getRegistrationDTo().isBiometricExceptionAvailable(this.uiFieldDTO.getId());
+		if (this.uiFieldDTO.isExceptionPhotoRequired() && exceptionExists
+				&& !biometricsController.isBiometricExceptionProofCollected(this.uiFieldDTO.getId())) {
+			return io.mosip.registration.constants.RegistrationUIConstants
+					.getMessageLanguageSpecific(io.mosip.registration.constants.RegistrationUIConstants.BIOMETRIC_EXCEPTION_PHOTO_MISSING);
+		}
+		return null;
+	}
+
 	private void addRemoveCaptureStatusMark(HBox pane, Modality modality) {
 		if (pane.getChildren().size() > 1) {
 			pane.getChildren().remove(1);
+		}
+
+		// exceptions are marked but their photo is not captured yet: flag the exception photo tile
+		if (modality.equals(Modality.EXCEPTION_PHOTO)
+				&& getRegistrationDTo().isBiometricExceptionAvailable(uiFieldDTO.getId())
+				&& !biometricsController.isBiometricExceptionProofCollected(uiFieldDTO.getId())) {
+			pane.getChildren().add(addCompletionImg(getCompletionImgPath(true)));
+			return;
 		}
 
 		boolean isExceptionsMarked = isAnyExceptions(modality);

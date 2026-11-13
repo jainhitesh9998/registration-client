@@ -656,8 +656,7 @@ public class GenericController extends BaseController {
 			for(UiFieldDTO field : result.get().getFields()) {
 				if(getFxControl(field.getId()) != null && !getFxControl(field.getId()).canContinue()) {
 					LOGGER.error("Screen validation , fieldId : {} has invalid value", field.getId()); 
-					String label = getFxControl(field.getId()).getUiSchemaDTO().getLabel().getOrDefault(ApplicationContext.applicationLanguage(), field.getId());
-					showHideErrorNotification(label);
+					showInvalidFieldNotification(field);
 					isValid = false;
 					break;
 				}
@@ -677,6 +676,17 @@ public class GenericController extends BaseController {
 
 	public void setNotification(Label notification) {
 		this.notification = notification;
+	}
+
+	private void showInvalidFieldNotification(UiFieldDTO field) {
+		FxControl control = getFxControl(field.getId());
+		String reason = control.getInvalidReason();
+		if (reason != null && !reason.isBlank()) {
+			notification.setTooltip(new Tooltip(reason));
+			notification.setText(reason);
+			return;
+		}
+		showHideErrorNotification(control.getUiSchemaDTO().getLabel().getOrDefault(ApplicationContext.applicationLanguage(), field.getId()));
 	}
 
 	public void showHideErrorNotification(String fieldName) {
@@ -699,10 +709,16 @@ public class GenericController extends BaseController {
 				break;
 			}
 
-			boolean anyInvalidField = screen.getFields()
+			Optional<UiFieldDTO> invalidField = screen.getFields()
 					.stream()
-					.anyMatch( field -> getFxControl(field.getId()) != null &&
-							getFxControl(field.getId()).canContinue() == false );
+					.filter( field -> getFxControl(field.getId()) != null &&
+							getFxControl(field.getId()).canContinue() == false )
+					.findFirst();
+			boolean anyInvalidField = invalidField.isPresent();
+			if (anyInvalidField) {
+				// tell the operator what blocks the step, like isScreenValid does when moving between steps
+				showInvalidFieldNotification(invalidField.get());
+			}
 
 			Optional<Tab> result = tabPane.getTabs().stream()
 					.filter(t -> t.getId().equalsIgnoreCase(screen.getName()+"_tab"))

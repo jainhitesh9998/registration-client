@@ -270,6 +270,7 @@ public class RegistrationUIConstants {
 	public static final String FINGERPRINT_SCANNING_ERROR = "FINGERPRINT_SCANNING_ERROR";
 	public static final String NO_DEVICE_FOUND = "NO_DEVICE_FOUND";
 	public static final String BIOMETRIC_LOGIN_NOT_ENROLLED = "BIOMETRIC_LOGIN_NOT_ENROLLED";
+	public static final String EXCEPTION_PHOTO_REQUIRED = "EXCEPTION_PHOTO_REQUIRED";
 	public static final String FINGERPRINT_SELECTION_PANE_ALERT = "FINGERPRINT_SELECTION_PANE_ALERT";
 	public static final String FINGERPRINT_SCAN_ALERT = "FINGERPRINT_SCAN_ALERT";
 	public static final String IRIS_VALIDATION_ERROR = "IRIS_VALIDATION_ERROR";
@@ -412,7 +413,7 @@ public class RegistrationUIConstants {
 
 	public static final String STREAMING_ERROR = "STREAMING_ERROR";
 
-	public static final String EXCEPTION_PHOTO_REQUIRED = "EXCEPTION_PHOTO_REQUIRED";
+	public static final String BIOMETRIC_EXCEPTION_PHOTO_MISSING = "BIOMETRIC_EXCEPTION_PHOTO_MISSING";
 
 	public static final String USER_RELOGIN_REQUIRED = "USER_RELOGIN_REQUIRED";
 
