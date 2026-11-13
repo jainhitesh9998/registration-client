@@ -2135,6 +2135,7 @@ public class BiometricsController extends BaseController /* implements Initializ
 		GridPane gridPane = new GridPane();
 
 		gridPane.setId(subMapKey.getKey());
+		gridPane.setVgap(10); // breathing room between modality tiles
 		Label label = new Label(subMapKey.getValue());
 		label.getStyleClass().add("paneHeader");
 

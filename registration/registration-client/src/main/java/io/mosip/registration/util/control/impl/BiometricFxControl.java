@@ -149,14 +149,14 @@ public class BiometricFxControl extends FxControl {
 			case "compact":
 				modalityListingNode = new HBox();
 				modalityListingNode.setId(uiFieldDTO.getId()+"_listing");
-				//((HBox)modalityListingNode).setSpacing(5);
+				((HBox)modalityListingNode).setSpacing(10);
 				((HBox)modalityListingNode).getChildren().addAll(modalityList);
 				gridPane.add(modalityListingNode,1,1);
 				break;
 			default:
 				modalityListingNode = new VBox();
 				modalityListingNode.setId(uiFieldDTO.getId()+"_listing");
-				//((VBox)modalityListingNode).setSpacing(5);
+				((VBox)modalityListingNode).setSpacing(10);
 				((VBox)modalityListingNode).getChildren().addAll(modalityList);
 				gridPane.add(modalityListingNode,0,1);
 				Parent captureDetails = null;

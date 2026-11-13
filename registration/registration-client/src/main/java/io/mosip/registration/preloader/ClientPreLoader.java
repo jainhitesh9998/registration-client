@@ -70,8 +70,21 @@ public class ClientPreLoader extends Preloader {
             }
         });
 
+        label.getStyleClass().add("preloaderTitle");
+        textArea.getStyleClass().add("preloaderLog");
+        textArea.setEditable(false);
+        progressBar.setPrefWidth(500);
+        stopClient.getStyleClass().add("preloaderDangerButton");
+        hidePreLoader.getStyleClass().add("preloaderButton");
+        loading.getStyleClass().add("preloaderCard");
+
         BorderPane root = new BorderPane(loading);
+        root.getStyleClass().add("preloaderRoot");
         Scene scene = new Scene(root);
+        java.net.URL themeUrl = ClientPreLoader.class.getResource("/application.css");
+        if (themeUrl != null) {
+            scene.getStylesheets().add(themeUrl.toExternalForm());
+        }
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);

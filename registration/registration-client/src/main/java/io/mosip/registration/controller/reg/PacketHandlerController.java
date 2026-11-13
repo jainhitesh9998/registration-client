@@ -62,6 +62,7 @@ import io.mosip.registration.update.SoftwareUpdateHandler;
 import io.mosip.registration.util.acktemplate.TemplateGenerator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -73,6 +74,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import lombok.NonNull;
@@ -818,26 +820,31 @@ public class PacketHandlerController extends BaseController implements Initializ
 		}
 	}
 
+	private static final double HOME_TILE_HEIGHT = 80.0;
+	private static final double HOME_TILE_ICON_WIDTH = 72.0;
+
 	private void addParentRowConstraints(int size) {
 		registrationGridPane.getRowConstraints().clear();
 		for(int i=0;i<size;i++) {
-			RowConstraints rowConstraints = new RowConstraints();
-			rowConstraints.setPercentHeight((double)100/size);
+			// fixed-height rows so every Home tile has the same height regardless of the process count
+			RowConstraints rowConstraints = new RowConstraints(HOME_TILE_HEIGHT, HOME_TILE_HEIGHT, HOME_TILE_HEIGHT);
+			rowConstraints.setVgrow(Priority.NEVER);
 			registrationGridPane.getRowConstraints().add(rowConstraints);
 		}
 	}
 
 	private GridPane buildRegistrationProcessPane(ProcessSpecDto processSpecDto) {
 		GridPane gridPane = new GridPane();
-		gridPane.getStyleClass().add("operationalPaneDetailsSync");
+		gridPane.getStyleClass().add("homeTile");
 		gridPane.setId(processSpecDto.getId());
 		RowConstraints rowConstraints = new RowConstraints();
 		rowConstraints.setPercentHeight(100);
 		gridPane.getRowConstraints().addAll(rowConstraints);
-		ColumnConstraints columnConstraint1 = new ColumnConstraints();
-		columnConstraint1.setPercentWidth(10);
+		// fixed icon column so icons and titles line up with the other Home tiles
+		ColumnConstraints columnConstraint1 = new ColumnConstraints(HOME_TILE_ICON_WIDTH, HOME_TILE_ICON_WIDTH, HOME_TILE_ICON_WIDTH);
+		columnConstraint1.setHalignment(HPos.CENTER);
 		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setPercentWidth(90);
+		columnConstraint2.setHgrow(Priority.ALWAYS);
 		gridPane.getColumnConstraints().addAll(columnConstraint1, columnConstraint2);
 		gridPane.setOnMouseClicked(event -> {
 			selectLanguage(event);

@@ -178,7 +178,7 @@ public class TextFieldFxControl extends FxControl {
 
 		this.node = simpleTypeVBox;
 		simpleTypeVBox.setId(fieldName + RegistrationConstants.VBOX);
-		simpleTypeVBox.setSpacing(18);
+		simpleTypeVBox.setSpacing(6);
 
 		/** Title label */
 		Label fieldTitle = getLabel(uiFieldDTO.getId() + RegistrationConstants.LABEL, "",
