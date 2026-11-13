@@ -285,7 +285,7 @@ public class RegistrationApprovalController extends BaseController implements In
 						setText(item);
 						int currentIndex = indexProperty().getValue() < 0 ? 0 : indexProperty().getValue();
 						if (param.getTableView().getItems().get(currentIndex).getHasBwords()) {
-							setStyle("-fx-background-color: yellow;");
+							setStyle("-fx-background-color: -mx-warning-soft;"); // blocklisted-word highlight
 						}
 					}
 					if (item == null) {

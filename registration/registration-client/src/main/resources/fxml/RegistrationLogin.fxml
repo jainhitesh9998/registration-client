@@ -14,24 +14,36 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
+<!-- Login (LoginController). Split layout: brand panel (illustration + product name) on the left, sign-in panel
+     with the form centred on the right. Same fx:ids / handlers / node types as before. -->
 <BorderPane id="loginScreen" prefHeight="553.0" prefWidth="523.0" styleClass="loginBorderPaneStyle" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="io.mosip.registration.controller.auth.LoginController">
-  <bottom>
-    <HBox id="footer-section">
+  <center>
+    <HBox styleClass="loginLayout">
       <children>
-        <Label text="%mosip.io" />
-        <Label text="  " />
-        <Label text="%regClientVersion" />
-        <Label text=" : " />
-        <Label fx:id="versionValueLabel" />
-      </children>
-    </HBox>
-  </bottom>
-  <right>
-    <AnchorPane fx:id="contentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="489.0">
+        <StackPane maxWidth="Infinity" prefWidth="0.0" styleClass="loginHero" HBox.hgrow="ALWAYS">
+          <children>
+            <Region styleClass="loginHeroArt" />
+            <Region styleClass="loginHeroScrim" />
+            <VBox alignment="BOTTOM_LEFT" styleClass="loginHeroContent">
+              <children>
+                <ImageView fx:id="mosipLogoImageView" fitHeight="56.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@../images/logo-final.png" />
+                  </image>
+                </ImageView>
+                <Label styleClass="loginHeroTitle" text="%regclient" wrapText="true" />
+                <Region styleClass="loginHeroRule" />
+              </children>
+            </VBox>
+          </children>
+        </StackPane>
+        <StackPane minWidth="560.0" prefWidth="560.0" styleClass="loginFormPanel">
+          <children>
+    <AnchorPane fx:id="contentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
       <children>
         <!-- Login cards: each AnchorPane (type required by LoginController) hosts a VBox flow so spacing
              stays consistent and hidden controls (e.g. single-language combo) collapse instead of leaving gaps -->
-        <AnchorPane fx:id="userIdPane" layoutX="37.0" layoutY="188.0" styleClass="userNameAnchorPaneStyle" visible="true">
+        <AnchorPane fx:id="userIdPane" managed="${userIdPane.visible}" styleClass="userNameAnchorPaneStyle" visible="true">
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
@@ -45,7 +57,7 @@
             <ProgressIndicator fx:id="progressIndicator" layoutX="180.0" layoutY="120.0" progress="0.0" visible="false" />
           </children>
         </AnchorPane>
-        <AnchorPane fx:id="credentialsPane" layoutX="37.0" layoutY="188.0" styleClass="loginAnchorPaneExtendedStyle" visible="false">
+        <AnchorPane fx:id="credentialsPane" managed="${credentialsPane.visible}" styleClass="loginAnchorPaneExtendedStyle" visible="false">
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
@@ -64,7 +76,7 @@
             <ProgressIndicator fx:id="passwordProgressIndicator" layoutX="180.0" layoutY="120.0" progress="0.0" visible="false" />
           </children>
         </AnchorPane>
-        <AnchorPane fx:id="otpPane" layoutX="37.0" layoutY="188.0" styleClass="loginAnchorPaneExtendedStyle" visible="false">
+        <AnchorPane fx:id="otpPane" managed="${otpPane.visible}" styleClass="loginAnchorPaneExtendedStyle" visible="false">
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
@@ -83,7 +95,7 @@
             </VBox>
           </children>
         </AnchorPane>
-        <AnchorPane fx:id="fingerprintPane" layoutX="37.0" layoutY="188.0" styleClass="loginAnchorPaneStyle" visible="false">
+        <AnchorPane fx:id="fingerprintPane" managed="${fingerprintPane.visible}" styleClass="loginAnchorPaneStyle" visible="false">
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
@@ -105,7 +117,7 @@
             </VBox>
           </children>
         </AnchorPane>
-        <AnchorPane fx:id="irisPane" layoutX="37.0" layoutY="188.0" styleClass="loginAnchorPaneStyle" visible="false">
+        <AnchorPane fx:id="irisPane" managed="${irisPane.visible}" styleClass="loginAnchorPaneStyle" visible="false">
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
@@ -127,7 +139,7 @@
             </VBox>
           </children>
         </AnchorPane>
-        <AnchorPane fx:id="facePane" layoutX="10.0" layoutY="38.0" styleClass="loginFaceCardStyle" visible="false">
+        <AnchorPane fx:id="facePane" managed="${facePane.visible}" styleClass="loginFaceCardStyle" visible="false">
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
@@ -154,27 +166,24 @@
             </VBox>
           </children>
         </AnchorPane>
-        <AnchorPane fx:id="errorPane" layoutX="108.0" layoutY="153.0" styleClass="loginAnchorPaneStyle" visible="false">
+        <AnchorPane fx:id="errorPane" managed="${errorPane.visible}" styleClass="loginAnchorPaneStyle" visible="false">
           <children>
             <Label prefWidth="300.0" text="%internalsystemerror.pleasecontactadmin." />
           </children>
         </AnchorPane>
       </children>
     </AnchorPane>
-  </right>
-  <top>
-    <HBox id="header-section" prefHeight="27.0" prefWidth="523.0">
-      <children>
-        <AnchorPane prefHeight="27.0" prefWidth="71.0">
-          <children>
-            <ImageView fx:id="mosipLogoImageView" fitHeight="34.0" fitWidth="30.0" layoutX="20.0" layoutY="2.0">
-              <image>
-                <Image url="@../images/logo-final.png" />
-              </image>
-            </ImageView>
+            <HBox id="footer-section" alignment="CENTER" maxHeight="-Infinity" StackPane.alignment="BOTTOM_CENTER">
+              <children>
+                <Label text="%mosip.io" />
+                <Label text="%regClientVersion" />
+                <Label text=" : " />
+                <Label fx:id="versionValueLabel" />
+              </children>
+            </HBox>
           </children>
-        </AnchorPane>
+        </StackPane>
       </children>
     </HBox>
-  </top>
+  </center>
 </BorderPane>

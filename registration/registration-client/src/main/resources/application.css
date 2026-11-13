@@ -41,19 +41,21 @@
 	-mx-nav: #24145C;
 	-mx-nav-dark: #1A0E3D;
 
-	/* Neutrals - UX4G neutral ramp */
+	/* Neutrals - UX4G neutral ramp for text; surfaces carry a faint primary tint so cards sit softly on the
+	   canvas instead of glaring pure white against grey */
 	-mx-text: #171717;
 	-mx-text-secondary: #404040;
 	-mx-text-muted: #737373;
 	-mx-text-placeholder: #A1A1A1;
-	-mx-surface: #FFFFFF;
-	-mx-surface-muted: #FAFAFA;
-	-mx-surface-sunken: #F5F5F5;
-	-mx-canvas: #F5F5F5;
-	-mx-border: #D9D9D9;
-	-mx-border-subtle: #E5E5E5;
+	-mx-surface: #FBFBFD;
+	-mx-surface-muted: #F6F5FA;
+	-mx-surface-sunken: #EFEEF4;
+	-mx-canvas: #EEEDF4;
+	-mx-border: #D8D6E2;
+	-mx-border-subtle: #E4E2EC;
 	-mx-border-strong: #A1A1A1;
-	-mx-control-border: #A1A1A1;
+	-mx-control-border: #928EA3;
+	-mx-field: #FFFFFF;
 
 	/* Status - UX4G green / red / orange / cyan */
 	-mx-success: #128937;
@@ -80,7 +82,7 @@
 	-fx-box-border: -mx-border;
 	-fx-text-box-border: -mx-control-border;
 	-fx-outer-border: -mx-border;
-	-fx-base: #F5F5F5;
+	-fx-base: #EEEDF4;
 	-fx-background: -mx-surface;
 }
 
@@ -131,7 +133,7 @@
 .text-area,
 .combo-box-base,
 .date-picker > .text-field {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-highlight-fill: -mx-primary-soft-border;
@@ -143,8 +145,8 @@
 .password-field:focused,
 .text-area:focused,
 .combo-box-base:focused {
-	-fx-background-color: -mx-primary, -mx-surface;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-color: -mx-primary, -mx-field;
+	-fx-background-insets: 0, 2;
 }
 
 .text-area .content {
@@ -453,7 +455,7 @@
 	-fx-pref-height: 10.0px;
 	-fx-pref-width: 315.0px;
 	-fx-background-insets: 0, 1;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
 	-fx-prompt-text-fill: -mx-text-placeholder;
@@ -605,7 +607,7 @@
 
 /* Device Onboarding */
 .inputFields {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
@@ -779,7 +781,7 @@
 	-fx-pref-height: 42.0px;
 	-fx-pref-width: -1;
 	-fx-prompt-text-fill: -mx-text-placeholder;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-font-size: 14px;
@@ -788,8 +790,8 @@
 
 .loginTextStyle:focused {
 	-fx-prompt-text-fill: -mx-text-placeholder;
-	-fx-background-color: -mx-primary, -mx-surface;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-color: -mx-primary, -mx-field;
+	-fx-background-insets: 0, 2;
 }
 
 .hyperLinkStyle {
@@ -938,9 +940,7 @@
 Working on new Css by taleev
 */
 #loginScreen {
-	-fx-background-image: url('/images/LoginBackGround.png');
-	-fx-background-size: cover, auto;
-	-fx-background-position: left top, center;
+	-fx-background-color: -mx-surface;
 }
 
 #header-section {
@@ -982,7 +982,7 @@ Working on new Css by taleev
 .loginTextStyle {
 	-fx-pref-height: 42.0px;
 	-fx-pref-width: -1;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-font-size: 14px;
@@ -998,7 +998,7 @@ Working on new Css by taleev
 .searchBoxTextStyle {
 	-fx-pref-height: 30.0px;
 	-fx-pref-width: 320.0px;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
@@ -1006,8 +1006,8 @@ Working on new Css by taleev
 }
 
 .searchBoxTextStyle:focused {
-	-fx-background-color: -mx-primary, -mx-surface;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-color: -mx-primary, -mx-field;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
 	-fx-prompt-text-fill: -mx-text-placeholder;
@@ -1016,7 +1016,7 @@ Working on new Css by taleev
 .settingsTextFieldStyle {
 	-fx-pref-height: 30.0px;
 	-fx-pref-width: 250.0px;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
@@ -1026,7 +1026,7 @@ Working on new Css by taleev
 .deviceSettingsTextFieldStyle {
 	-fx-pref-height: 30.0px;
 	-fx-pref-width: 150.0px;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
@@ -1034,17 +1034,17 @@ Working on new Css by taleev
 }
 
 .settingsTextFieldStyle:focused {
-	-fx-background-color: -mx-primary, -mx-surface;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-color: -mx-primary, -mx-field;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 }
 
 .higlightedLoginLable {
-	-fx-font-size: 26.0px;
+	-fx-font-size: 28.0px;
 	-fx-text-fill: -mx-text;
-	-fx-font-family: 'Noto Sans Medium';
+	-fx-font-family: 'Noto Sans SemiBold';
 	-fx-padding: 0 0 8 0;
 }
 
@@ -1240,7 +1240,7 @@ Working on new Css by taleev
 }
 
 .demoGraphicTextField {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 	-fx-font-size: 1.2em;
 	-fx-text-fill: -mx-text;
@@ -1254,7 +1254,7 @@ Working on new Css by taleev
 	-fx-text-fill: -mx-success;
 	-fx-pref-height: 5.0px;
 	-fx-pref-width: 10.0px;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 }
@@ -1268,7 +1268,7 @@ Working on new Css by taleev
 }
 
 .documentTextField {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 	-fx-font-size: 12;
 	-fx-text-fill: -mx-text;
@@ -1336,25 +1336,25 @@ Working on new Css by taleev
 }
 
 .demoGraphicTextFieldFocused {
-	-fx-background-color: -mx-danger, -mx-surface;
+	-fx-background-color: -mx-danger, -mx-field;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 	-fx-text-fill: -mx-text;
 	-fx-font-size: 1.2em;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 }
 
 .demoGraphicTextFieldFocused:focused {
-	-fx-background-color: -mx-danger, -mx-surface;
+	-fx-background-color: -mx-danger, -mx-field;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 	-fx-text-fill: -mx-text;
 	-fx-font-size: 1.2em;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 }
 
 .demoGraphicTextFieldOnType {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-text-fill: -mx-text;
 	-fx-font-size: 1.2em;
 	-fx-background-insets: 0, 1;
@@ -1363,11 +1363,11 @@ Working on new Css by taleev
 }
 
 .demoGraphicTextFieldOnType:focused {
-	-fx-background-color: -mx-primary, -mx-surface;
+	-fx-background-color: -mx-primary, -mx-field;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 	-fx-text-fill: -mx-text;
 	-fx-font-size: 1.2em;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 }
 
@@ -1386,7 +1386,7 @@ Working on new Css by taleev
 }
 
 .demographicCombobox {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-font-size: 14.0px;
 	-fx-pref-height: 10.0px;
 	-fx-pref-width: 190.0px;
@@ -1395,7 +1395,7 @@ Working on new Css by taleev
 }
 
 .loginCombobox {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-font-size: 14.0px;
 	-fx-pref-height: 42.0px;
 	-fx-pref-width: -1;
@@ -1410,30 +1410,30 @@ Working on new Css by taleev
 }
 
 .filterCombobox {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-font-size: 14.0px;
 	-fx-pref-height: 35.0px;
 	-fx-pref-width: 240.0px;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 }
 
 .demographicComboboxFocused {
-	-fx-background-color: -mx-danger, -mx-surface;
+	-fx-background-color: -mx-danger, -mx-field;
 	-fx-font-size: 14.0px;
 	-fx-pref-height: 10.0px;
 	-fx-pref-width: 190.0px;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 }
 
 .demographicCombobox:focused {
-	-fx-background-color: -mx-primary, -mx-surface;
+	-fx-background-color: -mx-primary, -mx-field;
 	-fx-font-size: 14.0px;
 	-fx-pref-height: 10.0px;
 	-fx-pref-width: 190.0px;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 }
 
@@ -1450,7 +1450,7 @@ Working on new Css by taleev
 }
 
 .documentCombobox {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-font-size: 1.2em;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
@@ -1479,9 +1479,9 @@ Working on new Css by taleev
 }
 
 .documentCombobox:focused {
-	-fx-background-color: -mx-primary, -mx-surface;
+	-fx-background-color: -mx-primary, -mx-field;
 	-fx-font-size: 1.2em;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 }
 
@@ -1685,7 +1685,7 @@ Working on new Css by taleev
 
 .operatorAuthenticationStyleTextTypeOne {
 	-fx-text-fill: -mx-text;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-prompt-text-fill: -mx-text-placeholder;
@@ -1693,8 +1693,8 @@ Working on new Css by taleev
 
 .operatorAuthenticationStyleTextTypeOne:focused {
 	-fx-text-fill: -mx-text;
-	-fx-background-color: -mx-primary, -mx-surface;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-color: -mx-primary, -mx-field;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 }
@@ -1904,7 +1904,7 @@ Working on new Css by taleev
 }
 
 #rejectionAnchorPane .comboboxStyle {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-font-size: 14.0px;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
@@ -2027,7 +2027,7 @@ Working on new Css by taleev
 }
 
 .uinUpdateTextFiledStyle {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
@@ -2035,8 +2035,8 @@ Working on new Css by taleev
 }
 
 .uinUpdateTextFiledStyle:focused {
-	-fx-background-color: -mx-primary, -mx-surface;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-color: -mx-primary, -mx-field;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
 	-fx-prompt-text-fill: -mx-text-placeholder;
@@ -2173,7 +2173,7 @@ Working on new Css by taleev
 .authenticationStyle {
 	-fx-pref-height: 39.0px;
 	-fx-pref-width: 269.0px;
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 8, 7;
 	-fx-text-fill: -mx-text;
@@ -2182,8 +2182,8 @@ Working on new Css by taleev
 
 .authenticationStyle:focused {
 	-fx-text-fill: -mx-text;
-	-fx-background-color: -mx-primary, -mx-surface;
-	-fx-background-insets: 0, 1.5;
+	-fx-background-color: -mx-primary, -mx-field;
+	-fx-background-insets: 0, 2;
 	-fx-background-radius: 8, 7;
 	-fx-prompt-text-fill: -mx-text-placeholder;
 }
@@ -2471,7 +2471,7 @@ Working on new Css by taleev
 }
 
 .syncJobTextField {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-font-size: 11.0px;
 	-fx-text-fill: -mx-primary;
 	-fx-pref-width: 90.0px;
@@ -2798,7 +2798,7 @@ Working on new Css by taleev
 }
 
 .exceptionCombobox {
-	-fx-background-color: -mx-border, -mx-surface;
+	-fx-background-color: -mx-control-border, -mx-field;
 	-fx-text-fill: -mx-text;
 	-fx-font-size: 12.0px;
 	-fx-background-insets: 0, 1;
@@ -3127,8 +3127,9 @@ Working on new Css by taleev
 }
 
 .additionaInfoReqIdLabel {
-	-fx-text-fill: -mx-primary;
-	-fx-font-size: 15px;
+	-fx-text-fill: -mx-text-secondary;
+	-fx-font-size: 13px;
+	-fx-font-family: 'Noto Sans Medium';
 }
 
 .navigationLabel {
@@ -3702,4 +3703,92 @@ Working on new Css by taleev
 .iconButton:hover {
 	-fx-background-color: -mx-primary-soft;
 	-fx-border-color: -mx-primary-soft-border;
+}
+
+/* --- Input group: text field with an attached keyboard suffix ------------ */
+.inputGroup > .text-input {
+	-fx-background-radius: 8 0 0 8, 7 0 0 7;
+}
+
+.inputGroup > .iconsHBox {
+	-fx-background-color: -mx-control-border, -mx-surface-muted;
+	-fx-background-insets: 0, 1 1 1 0;
+	-fx-background-radius: 0 8 8 0, 0 7 7 0;
+	-fx-pref-width: 44px;
+	-fx-min-width: 44px;
+	-fx-alignment: center;
+	-fx-padding: 0;
+	-fx-cursor: hand;
+	-fx-opacity: 0.85;
+}
+
+.inputGroup > .iconsHBox:hover {
+	-fx-background-color: -mx-control-border, -mx-primary-soft;
+	-fx-opacity: 1;
+}
+
+/* hover affordance for every outlined input */
+.text-field:hover,
+.password-field:hover,
+.combo-box-base:hover {
+	-fx-cursor: text;
+}
+
+/* --- Login: split layout ------------------------------------------------- */
+.loginLayout {
+	-fx-fill-height: true;
+}
+
+.loginHeroArt {
+	-fx-background-image: url('/images/LoginBackGround.png');
+	-fx-background-size: cover;
+	-fx-background-position: center bottom;
+}
+
+.loginHeroScrim {
+	-fx-background-color: linear-gradient(to top right, rgba(26, 14, 61, 0.94) 0%, rgba(36, 20, 92, 0.80) 45%, rgba(74, 43, 194, 0.45) 100%);
+}
+
+.loginHeroContent {
+	-fx-padding: 64;
+	-fx-spacing: 20;
+}
+
+.loginHeroTitle {
+	-fx-text-fill: #FFFFFF;
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 40px;
+}
+
+.loginHeroRule {
+	-fx-min-width: 64px;
+	-fx-max-width: 64px;
+	-fx-min-height: 4px;
+	-fx-max-height: 4px;
+	-fx-background-color: #A391FF;
+	-fx-background-radius: 2;
+}
+
+.loginFormPanel {
+	-fx-background-color: -mx-surface;
+	-fx-padding: 48 64 24 64;
+}
+
+.loginFormPanel .userNameAnchorPaneStyle,
+.loginFormPanel .loginAnchorPaneExtendedStyle,
+.loginFormPanel .loginAnchorPaneStyle,
+.loginFormPanel .loginFaceCardStyle {
+	-fx-background-color: transparent;
+	-fx-effect: null;
+	-fx-pref-width: 432px;
+}
+
+.loginFormPanel .loginCardBody {
+	-fx-padding: 0;
+	-fx-spacing: 20;
+}
+
+.loginFormPanel #footer-section .label {
+	-fx-text-fill: -mx-text-muted;
+	-fx-font-size: 12px;
 }

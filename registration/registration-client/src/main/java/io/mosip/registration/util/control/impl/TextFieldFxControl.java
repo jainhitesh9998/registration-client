@@ -310,6 +310,7 @@ public class TextFieldFxControl extends FxControl {
 
 	private HBox createTextBox(String langCode, boolean isSimpleType) {
 		HBox textFieldHBox = new HBox();
+		textFieldHBox.getStyleClass().add("inputGroup"); // field + attached keyboard suffix (application.css)
 		TextField textField = getTextField(langCode, uiFieldDTO.getId() + langCode, false);
 		textField.setMinWidth(400);
 		textFieldHBox.getChildren().add(textField);

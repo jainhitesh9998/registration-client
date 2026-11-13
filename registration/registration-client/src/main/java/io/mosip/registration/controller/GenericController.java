@@ -79,6 +79,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
@@ -195,20 +196,24 @@ public class GenericController extends BaseController {
 
 		HBox hBox = new HBox();
 		hBox.setAlignment(Pos.CENTER_LEFT);
-		hBox.setSpacing(20);
-		hBox.setPrefHeight(100);
 		hBox.setPrefWidth(200);
+
+		// label above the input row, like every other form field
+		VBox field = new VBox(6);
+		HBox inputRow = new HBox(12);
+		inputRow.setAlignment(Pos.CENTER_LEFT);
+		hBox.getChildren().add(field);
 
 		Label label = new Label();
 		label.getStyleClass().add(LABEL_CLASS);
 		label.setId("preRegistrationLabel");
 		label.setText(ApplicationContext.getBundle(langCode, RegistrationConstants.LABELS)
 				.getString("applicationId"));
-		hBox.getChildren().add(label);
+		field.getChildren().addAll(label, inputRow);
 		TextField textField = new TextField();
 		textField.setId("preRegistrationId");
 		textField.getStyleClass().add(TEXTFIELD_CLASS);
-		hBox.getChildren().add(textField);
+		inputRow.getChildren().add(textField);
 		Button button = new Button();
 		button.setId("fetchBtn");
 		button.getStyleClass().add("contiuneButton");
@@ -219,11 +224,11 @@ public class GenericController extends BaseController {
 			executePreRegFetchTask(textField);
 		});
 
-		hBox.getChildren().add(button);
+		inputRow.getChildren().add(button);
 		progressIndicator = new ProgressIndicator();
 		progressIndicator.setId("progressIndicator");
 		progressIndicator.setVisible(false);
-		hBox.getChildren().add(progressIndicator);
+		inputRow.getChildren().add(progressIndicator);
 		return hBox;
 	}
 
@@ -773,7 +778,7 @@ public class GenericController extends BaseController {
 				gridPane.add(groupFlowPane, 0, rowIndex++);
 			}
 
-			screenGridPane.setStyle("-fx-background-color: white;");
+			screenGridPane.setStyle("-fx-background-color: -mx-surface;"); // theme surface token
 			screenGridPane.add(gridPane, 1, 1);
 			final ScrollPane scrollPane = new ScrollPane(screenGridPane);
 			scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

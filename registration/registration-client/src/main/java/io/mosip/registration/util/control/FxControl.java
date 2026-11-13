@@ -309,7 +309,7 @@ public abstract class FxControl  {
 		HBox validationHBox = new HBox();
 		validationHBox.setSpacing(20);
 		validationHBox.getChildren().add(validationMessage);
-		validationHBox.setStyle("-fx-background-color:WHITE");
+		validationHBox.setStyle("-fx-background-color: -mx-surface;"); // theme surface token
 		vBox.getChildren().add(validationHBox);
 	}
 

@@ -21,7 +21,8 @@ All visual values are tokens on `.root` in
 | Font | Noto Sans Regular / Medium / SemiBold / Bold, bundled (`resources/fonts`, SIL OFL 1.1) |
 | Brand | Primary 600 `#4A2BC2`; hover 700 `#3D239F`; pressed 800 `#301C7D`; tint 50 `#F2EFFF` |
 | Chrome | Primary 900 `#24145C` app bar |
-| Neutrals | Text `#171717` / `#404040` / `#737373`; borders `#D9D9D9` / `#E5E5E5`; canvas `#F5F5F5` |
+| Neutrals | Text `#171717` / `#404040` / `#737373`. Surfaces carry a faint primary tint so cards sit softly on the page: canvas `#EEEDF4`, cards `#FBFBFD`, dividers `#E4E2EC` |
+| Inputs | White field `#FFFFFF` with a `#928EA3` boundary (about 3:1, per UX4G's control-contrast rule), 2px primary focus ring, attached keyboard suffix |
 | Status | Success `#128937`, error `#DB372D`, warning `#D46B08`, info `#08979C`, each with a soft tint |
 | Spacing | 4px grid (8 / 12 / 16 / 24 / 32); 32px page margins, 24px gutters |
 | Radius | 8 for controls, 12 for cards, 999 for chips |
@@ -37,7 +38,7 @@ All visual values are tokens on `.root` in
 | Registration flow (`GenericRegistrationLayout.fxml`) | Page title above the steps, the steps in one full-width card with underline tabs, an action bar with the status message and primary action |
 | Form fields (code-built) | Labels above inputs (6px gap); hidden validation and transliteration helpers no longer reserve space; chip groups labelled like other fields; 24/16px gaps |
 | Pending approval | Breadcrumb, title and Approve/Reject header; list and preview as matching cards; action bar with guidance and Authenticate |
-| Login | Card laid out as a vertical flow; the language picker collapses when unused |
+| Login (`RegistrationLogin.fxml`) | Split layout: a brand panel (illustration under an indigo scrim, MOSIP logo, product name) and a sign-in panel with the form vertically centred. Cards collapse when hidden, and the language picker collapses when unused |
 | Everything else | Picks up the tokens: tables, dialogs, menus, settings, biometrics, onboarding, upload, re-registration |
 
 ### Code touched (UI construction only)
@@ -45,7 +46,8 @@ All visual values are tokens on `.root` in
 - `PacketHandlerController`: process cards in a 4-column grid.
 - `GenericController`: form margins and gaps.
 - `ButtonFxControl`: label above the chips.
-- `FxControl.collapseWhenHidden` (new helper), used by `TextFieldFxControl` and `DropDownFxControl`.
+- `FxControl.collapseWhenHidden` (new helper), used by `TextFieldFxControl` (plus its `inputGroup` style hook) and `DropDownFxControl`.
+- `GenericController`: Application ID label above its input; inline `white` styles now use the surface token.
 - `DOB*FxControl`: `dobFieldGroup` style hook.
 - `BiometricFxControl` / `BiometricsController`: tile spacing.
 - `ClientPreLoader`: themed startup window.
