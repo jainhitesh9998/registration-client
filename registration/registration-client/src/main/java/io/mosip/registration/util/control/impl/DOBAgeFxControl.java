@@ -55,6 +55,7 @@ public class DOBAgeFxControl extends FxControl {
 		this.control = this;
 		VBox appLangDateVBox = create(uiFieldDTO);
 		HBox hBox = new HBox();
+		hBox.getStyleClass().add("dobFieldGroup"); // compact date-part inputs (see application.css)
 		hBox.setSpacing(30);
 		hBox.getChildren().add(appLangDateVBox);
 		HBox.setHgrow(appLangDateVBox, Priority.ALWAYS);
@@ -86,7 +87,8 @@ public class DOBAgeFxControl extends FxControl {
 
 		/** DOB Label */
 		ageVBox.getChildren().add(getLabel(uiFieldDTO.getId() + RegistrationConstants.LABEL,
-				String.join(RegistrationConstants.SLASH, labels) + mandatorySuffix, RegistrationConstants.DEMOGRAPHIC_FIELD_LABEL, true, ageVBox.getWidth()));
+				primaryLabel(labels) + mandatorySuffix, RegistrationConstants.DEMOGRAPHIC_FIELD_LABEL, true, ageVBox.getWidth()));
+		ageVBox.getChildren().add(secondaryLabels(uiFieldDTO.getId(), labels));
 
 		/** Add Date */
 		dobHBox.getChildren().add(addDateTextField(uiFieldDTO, RegistrationConstants.DD,

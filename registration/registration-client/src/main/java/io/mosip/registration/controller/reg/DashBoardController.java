@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.registration.controller.TemplateTheme;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.RegistrationConstants;
 import io.mosip.registration.context.SessionContext;
@@ -36,6 +37,7 @@ public class DashBoardController extends BaseController implements Initializable
 				RegistrationConstants.ENABLE);
 		
 		WebEngine webEngine = dashboardWebView.getEngine();
+		TemplateTheme.apply(webEngine);
 		webEngine.loadContent(stringWriter.toString());
 		
 		LOGGER.info("Dashboard template has been loaded to webview");

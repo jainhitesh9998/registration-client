@@ -94,7 +94,7 @@ public class DropDownFxControl extends FxControl {
 		VBox simpleTypeVBox = new VBox();
 		//simpleTypeVBox.setPrefWidth(200);
 		//simpleTypeVBox.setPrefHeight(95);
-		simpleTypeVBox.setSpacing(18);
+		simpleTypeVBox.setSpacing(6);
 		simpleTypeVBox.setId(fieldName + RegistrationConstants.VBOX);
 
 		/** Title label */
@@ -107,7 +107,9 @@ public class DropDownFxControl extends FxControl {
 			labels.add(this.uiFieldDTO.getLabel().get(lCode));
 		});
 
-		String titleText = String.join(RegistrationConstants.SLASH, labels) + getMandatorySuffix(uiFieldDTO);
+		String titleText = primaryLabel(labels) + getMandatorySuffix(uiFieldDTO);
+		simpleTypeVBox.getChildren().add(simpleTypeVBox.getChildren().indexOf(fieldTitle) + 1,
+				secondaryLabels(fieldName, labels));
 		ComboBox<GenericDto> comboBox = getComboBox(fieldName, titleText, RegistrationConstants.DOC_COMBO_BOX,
 				simpleTypeVBox.getPrefWidth(), false);
 		simpleTypeVBox.getChildren().add(comboBox);
@@ -130,7 +132,7 @@ public class DropDownFxControl extends FxControl {
 		Label messageLabel = getLabel(uiFieldDTO.getId() + RegistrationConstants.MESSAGE, null,
 				RegistrationConstants.DEMOGRAPHIC_FIELD_LABEL, false, simpleTypeVBox.getPrefWidth());
 		messageLabel.setMaxWidth(200);
-		simpleTypeVBox.getChildren().add(messageLabel);
+		simpleTypeVBox.getChildren().add(collapseWhenHidden(messageLabel));
 
 		changeNodeOrientation(simpleTypeVBox, langCode);
 

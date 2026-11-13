@@ -223,7 +223,7 @@ public class DocumentFxControl extends FxControl {
 			labels.add(rb.getString(RegistrationConstants.REF_NUMBER));
 		});
 
-		String titleText = String.join(RegistrationConstants.SLASH, labels);
+		String titleText = primaryLabel(labels);
 		ResourceBundle rb = ApplicationContext.getInstance()
 				.getBundle(getRegistrationDTo().getSelectedLanguagesByApplicant().get(0), RegistrationConstants.LABELS);
 
@@ -271,7 +271,7 @@ public class DocumentFxControl extends FxControl {
 		getRegistrationDTo().getSelectedLanguagesByApplicant().forEach(lCode -> {
 			labels.add(this.uiFieldDTO.getLabel().get(lCode));
 		});
-		String titleText = String.join(RegistrationConstants.SLASH, labels) + getMandatorySuffix(uiFieldDTO);
+		String titleText = primaryLabel(labels) + getMandatorySuffix(uiFieldDTO);
 
 		/** Title label */
 		Label fieldTitle = getLabel(fieldName + RegistrationConstants.LABEL, titleText,

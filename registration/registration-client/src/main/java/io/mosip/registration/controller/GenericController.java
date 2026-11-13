@@ -4,6 +4,7 @@ import static io.mosip.registration.constants.RegistrationConstants.EMPTY;
 import static io.mosip.registration.constants.RegistrationConstants.HASH;
 import static io.mosip.registration.constants.RegistrationConstants.REG_AUTH_PAGE;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,6 +58,7 @@ import io.mosip.registration.util.control.impl.TextFieldFxControl;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -67,6 +69,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -78,7 +81,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
@@ -122,6 +127,18 @@ public class GenericController extends BaseController {
 
 	@FXML
 	private AnchorPane navigationAnchorPane;
+
+	/** Step rail of the registration wizard; optional (layouts without it keep the visible tab headers). */
+	@FXML
+	private VBox stepRail;
+
+	private static final String STEP_TABS_CLASS = "stepTabs";
+	private static final String STEP_ITEM_CLASS = "stepItem";
+	private static final String STEP_CURRENT_CLASS = "stepCurrent";
+	private static final String STEP_COMPLETED_CLASS = "stepCompleted";
+	private static final String STEP_DISABLED_CLASS = "stepDisabled";
+	private static final String STEP_ERROR_CLASS = "stepError";
+	private static final String STEP_PROGRESS_KEY = "stepProgress";
 
 	@FXML
 	private Button next;
@@ -195,20 +212,24 @@ public class GenericController extends BaseController {
 
 		HBox hBox = new HBox();
 		hBox.setAlignment(Pos.CENTER_LEFT);
-		hBox.setSpacing(20);
-		hBox.setPrefHeight(100);
 		hBox.setPrefWidth(200);
+
+		// label above the input row, like every other form field
+		VBox field = new VBox(6);
+		HBox inputRow = new HBox(12);
+		inputRow.setAlignment(Pos.CENTER_LEFT);
+		hBox.getChildren().add(field);
 
 		Label label = new Label();
 		label.getStyleClass().add(LABEL_CLASS);
 		label.setId("preRegistrationLabel");
 		label.setText(ApplicationContext.getBundle(langCode, RegistrationConstants.LABELS)
 				.getString("applicationId"));
-		hBox.getChildren().add(label);
+		field.getChildren().addAll(label, inputRow);
 		TextField textField = new TextField();
 		textField.setId("preRegistrationId");
 		textField.getStyleClass().add(TEXTFIELD_CLASS);
-		hBox.getChildren().add(textField);
+		inputRow.getChildren().add(textField);
 		Button button = new Button();
 		button.setId("fetchBtn");
 		button.getStyleClass().add("contiuneButton");
@@ -219,11 +240,11 @@ public class GenericController extends BaseController {
 			executePreRegFetchTask(textField);
 		});
 
-		hBox.getChildren().add(button);
+		inputRow.getChildren().add(button);
 		progressIndicator = new ProgressIndicator();
 		progressIndicator.setId("progressIndicator");
 		progressIndicator.setVisible(false);
-		hBox.getChildren().add(progressIndicator);
+		inputRow.getChildren().add(progressIndicator);
 		return hBox;
 	}
 
@@ -434,11 +455,11 @@ public class GenericController extends BaseController {
 		gridPane.getRowConstraints().addAll(topRowConstraints,midRowConstraints, bottomRowConstraints);
 
 		ColumnConstraints columnConstraint1 = new ColumnConstraints();
-		columnConstraint1.setPercentWidth(5);
+		columnConstraint1.setPercentWidth(3);
 		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setPercentWidth(90);
+		columnConstraint2.setPercentWidth(94);
 		ColumnConstraints columnConstraint3 = new ColumnConstraints();
-		columnConstraint3.setPercentWidth(5);
+		columnConstraint3.setPercentWidth(3);
 
 		gridPane.getColumnConstraints().addAll(columnConstraint1, columnConstraint2,
 				columnConstraint3);
@@ -454,8 +475,8 @@ public class GenericController extends BaseController {
 		ColumnConstraints columnConstraint = new ColumnConstraints();
 		columnConstraint.setPercentWidth(100);
 		groupGridPane.getColumnConstraints().add(columnConstraint);
-		groupGridPane.setHgap(20);
-		groupGridPane.setVgap(20);
+		groupGridPane.setHgap(24);
+		groupGridPane.setVgap(24);
 		return groupGridPane;
 	}
 
@@ -635,8 +656,7 @@ public class GenericController extends BaseController {
 			for(UiFieldDTO field : result.get().getFields()) {
 				if(getFxControl(field.getId()) != null && !getFxControl(field.getId()).canContinue()) {
 					LOGGER.error("Screen validation , fieldId : {} has invalid value", field.getId()); 
-					String label = getFxControl(field.getId()).getUiSchemaDTO().getLabel().getOrDefault(ApplicationContext.applicationLanguage(), field.getId());
-					showHideErrorNotification(label);
+					showInvalidFieldNotification(field);
 					isValid = false;
 					break;
 				}
@@ -656,6 +676,17 @@ public class GenericController extends BaseController {
 
 	public void setNotification(Label notification) {
 		this.notification = notification;
+	}
+
+	private void showInvalidFieldNotification(UiFieldDTO field) {
+		FxControl control = getFxControl(field.getId());
+		String reason = control.getInvalidReason();
+		if (reason != null && !reason.isBlank()) {
+			notification.setTooltip(new Tooltip(reason));
+			notification.setText(reason);
+			return;
+		}
+		showHideErrorNotification(control.getUiSchemaDTO().getLabel().getOrDefault(ApplicationContext.applicationLanguage(), field.getId()));
 	}
 
 	public void showHideErrorNotification(String fieldName) {
@@ -678,10 +709,16 @@ public class GenericController extends BaseController {
 				break;
 			}
 
-			boolean anyInvalidField = screen.getFields()
+			Optional<UiFieldDTO> invalidField = screen.getFields()
 					.stream()
-					.anyMatch( field -> getFxControl(field.getId()) != null &&
-							getFxControl(field.getId()).canContinue() == false );
+					.filter( field -> getFxControl(field.getId()) != null &&
+							getFxControl(field.getId()).canContinue() == false )
+					.findFirst();
+			boolean anyInvalidField = invalidField.isPresent();
+			if (anyInvalidField) {
+				// tell the operator what blocks the step, like isScreenValid does when moving between steps
+				showInvalidFieldNotification(invalidField.get());
+			}
 
 			Optional<Tab> result = tabPane.getTabs().stream()
 					.filter(t -> t.getId().equalsIgnoreCase(screen.getName()+"_tab"))
@@ -702,13 +739,115 @@ public class GenericController extends BaseController {
 		TabPane tabPane = new TabPane();
 		tabPane.setId(getRegistrationDTOFromSession().getRegistrationId());
 		tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-		tabPane.prefWidthProperty().bind(anchorPane.widthProperty());
-		tabPane.prefHeightProperty().bind(anchorPane.heightProperty());
+		// Fill the wizard card through anchors. Binding the pref size to the card's size feeds back into the
+		// card's own min size (AnchorPane uses an un-anchored child's pref size), so it grew on every layout pass.
+		AnchorPane.setTopAnchor(tabPane, 0.0);
+		AnchorPane.setRightAnchor(tabPane, 0.0);
+		AnchorPane.setBottomAnchor(tabPane, 0.0);
+		AnchorPane.setLeftAnchor(tabPane, 0.0);
+		tabPane.setMinSize(0, 0);
 
 		setTabSelectionChangeEventHandler(tabPane);
 		anchorPane.getChildren().add(tabPane);
 		addNavigationButtons(processSpecDto);
 		return tabPane;
+	}
+
+	/**
+	 * Builds the wizard step rail from the tabs of the process (whatever screens the process / UI spec defines,
+	 * plus preview and authentication). The TabPane stays the single source of truth: a click on a step selects
+	 * its tab, so the existing selection handler still validates and may veto the move; the rail only reflects
+	 * the TabPane state (selection, disabled tabs, tabs flagged with errors). Rebuilt if the tab list changes.
+	 */
+	private void buildStepRail(TabPane tabPane) {
+		if (stepRail == null || tabPane == null) {
+			return;
+		}
+		if (!tabPane.getStyleClass().contains(STEP_TABS_CLASS)) {
+			tabPane.getStyleClass().add(STEP_TABS_CLASS);
+			tabPane.getTabs().addListener((ListChangeListener<Tab>) change -> buildStepRail(tabPane));
+			tabPane.getSelectionModel().selectedIndexProperty()
+					.addListener((observable, oldValue, newValue) -> refreshStepRail(tabPane));
+		}
+
+		stepRail.getChildren().clear();
+		VBox steps = new VBox();
+		steps.getStyleClass().add("stepList");
+		for (int index = 0; index < tabPane.getTabs().size(); index++) {
+			Tab tab = tabPane.getTabs().get(index);
+			Label badge = new Label(String.valueOf(index + 1));
+			badge.getStyleClass().add("stepBadge");
+			badge.setMinWidth(Region.USE_PREF_SIZE);
+			Label title = new Label();
+			title.textProperty().bind(tab.textProperty());
+			title.setWrapText(true);
+			title.getStyleClass().add("stepTitle");
+			HBox item = new HBox(badge, title);
+			item.setAlignment(Pos.CENTER_LEFT);
+			item.getStyleClass().add(STEP_ITEM_CLASS);
+			item.setUserData(tab);
+			item.setOnMouseClicked(event -> {
+				if (!tab.isDisabled()) {
+					tabPane.getSelectionModel().select(tab);
+				}
+			});
+			if (tab.getProperties().putIfAbsent(STEP_ITEM_CLASS, Boolean.TRUE) == null) {
+				tab.disableProperty().addListener((observable, oldValue, newValue) -> refreshStepRail(tabPane));
+				tab.getStyleClass().addListener((ListChangeListener<String>) change -> refreshStepRail(tabPane));
+			}
+			steps.getChildren().add(item);
+		}
+		ProgressBar progress = new ProgressBar(0);
+		progress.setMaxWidth(Double.MAX_VALUE);
+		progress.getStyleClass().add("stepProgressBar");
+		// one label per word / number: JavaFX misplaces spaces next to digits inside right-to-left text, while an
+		// HBox of tokens mirrors correctly ("Step 2 of 6" / "الخطوة 2 من 6")
+		HBox progressLabel = new HBox();
+		progressLabel.setId("stepProgressText");
+		progressLabel.getStyleClass().add("stepProgressLabel");
+		stepRail.getChildren().addAll(steps, progress, progressLabel);
+		refreshStepRail(tabPane);
+	}
+
+	private void refreshStepRail(TabPane tabPane) {
+		if (stepRail == null || stepRail.getChildren().size() < 3) {
+			return;
+		}
+		VBox steps = (VBox) stepRail.getChildren().get(0);
+		int count = tabPane.getTabs().size();
+		int selected = tabPane.getSelectionModel().getSelectedIndex();
+		for (Node node : steps.getChildren()) {
+			if (!(node instanceof HBox) || !(node.getUserData() instanceof Tab)) {
+				continue;
+			}
+			Tab tab = (Tab) node.getUserData();
+			int index = tabPane.getTabs().indexOf(tab);
+			node.getStyleClass().removeAll(STEP_CURRENT_CLASS, STEP_COMPLETED_CLASS, STEP_DISABLED_CLASS, STEP_ERROR_CLASS);
+			Label badge = (Label) ((HBox) node).getChildren().get(0);
+			badge.setText(String.valueOf(index + 1));
+			if (index == selected) {
+				node.getStyleClass().add(STEP_CURRENT_CLASS);
+			} else if (index >= 0 && index < selected) {
+				node.getStyleClass().add(STEP_COMPLETED_CLASS);
+				badge.setText("\u2713");
+			}
+			if (tab.isDisabled()) {
+				// a step switched off by the process rules is skipped, not completed
+				node.getStyleClass().remove(STEP_COMPLETED_CLASS);
+				node.getStyleClass().add(STEP_DISABLED_CLASS);
+				badge.setText("\u2013");
+			}
+			if (tab.getStyleClass().contains(TAB_LABEL_ERROR_CLASS)) {
+				node.getStyleClass().add(STEP_ERROR_CLASS);
+				badge.setText("!");
+			}
+		}
+		ProgressBar progress = (ProgressBar) stepRail.getChildren().get(1);
+		HBox progressLabel = (HBox) stepRail.getChildren().get(2);
+		int position = Math.max(selected, 0) + 1;
+		progress.setProgress(count <= 1 ? 1.0 : (double) (position - 1) / (count - 1));
+		String progressText = MessageFormat.format(getLabelOrDefault(STEP_PROGRESS_KEY, "{0} / {1}"), position, count);
+		setTokenizedText(progressLabel, progressText, "stepProgressToken");
 	}
 
 	public void populateScreens() throws Exception {
@@ -756,8 +895,8 @@ public class GenericController extends BaseController {
 			for(Entry<String, List<UiFieldDTO>> groupEntry : screenFieldGroups.entrySet()) {
 				FlowPane groupFlowPane = new FlowPane();
 				groupFlowPane.prefWidthProperty().bind(gridPane.widthProperty());
-				groupFlowPane.setHgap(20);
-				groupFlowPane.setVgap(20);
+				groupFlowPane.setHgap(24);
+				groupFlowPane.setVgap(16);
 
 				for(UiFieldDTO fieldDTO : groupEntry.getValue()) {
 					try {
@@ -773,7 +912,7 @@ public class GenericController extends BaseController {
 				gridPane.add(groupFlowPane, 0, rowIndex++);
 			}
 
-			screenGridPane.setStyle("-fx-background-color: white;");
+			screenGridPane.setStyle("-fx-background-color: -mx-surface;"); // theme surface token
 			screenGridPane.add(gridPane, 1, 1);
 			final ScrollPane scrollPane = new ScrollPane(screenGridPane);
 			scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -785,6 +924,7 @@ public class GenericController extends BaseController {
 		//refresh to reflect the initial visibility configuration
 		refreshFields();
 		addPreviewAndAuthScreen(tabPane);
+		buildStepRail(tabPane);
 	}
 
 
@@ -847,6 +987,7 @@ public class GenericController extends BaseController {
 			webView.setId("webView");
 			webView.prefWidthProperty().bind(tabPane.widthProperty());
 			webView.prefHeightProperty().bind(tabPane.heightProperty());
+			TemplateTheme.apply(webView.getEngine());
 			webView.getEngine().loadContent(content);
 			final GridPane gridPane = new GridPane();
 			gridPane.prefWidthProperty().bind(tabPane.widthProperty());

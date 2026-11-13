@@ -5,6 +5,7 @@ import static io.mosip.registration.constants.RegistrationConstants.ACKNOWLEDGEM
 import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_NAME;
 
+import java.text.MessageFormat;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Controller;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManagerBuilder;
+import io.mosip.registration.util.healthcheck.RegistrationSystemPropertiesChecker;
+import io.mosip.registration.dto.RegistrationCenterDetailDTO;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.AuditEvent;
 import io.mosip.registration.constants.AuditReferenceIdTypes;
@@ -62,7 +65,9 @@ import io.mosip.registration.update.SoftwareUpdateHandler;
 import io.mosip.registration.util.acktemplate.TemplateGenerator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -73,7 +78,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.NonNull;
 
@@ -94,6 +102,20 @@ public class PacketHandlerController extends BaseController implements Initializ
 
 	@FXML
 	private Label pendingApprovalCountLbl;
+
+	/* Home header and attention strip (optional: absent in older/customised layouts, so always null-checked) */
+	@FXML
+	private Label homeGreeting;
+	@FXML
+	private Label homeContext;
+	@FXML
+	private HBox attentionStrip;
+	@FXML
+	private Label attentionApprovalLbl;
+	@FXML
+	private Label attentionReRegLbl;
+	@FXML
+	private VBox eodCard;
 
 	@FXML
 	private Label reRegistrationCountLbl;
@@ -306,6 +328,7 @@ public class PacketHandlerController extends BaseController implements Initializ
 			setLastUpdateTime();
 			pendingApprovalCountLbl.setText(RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.NO_PENDING_APPLICATIONS));
 			reRegistrationCountLbl.setText(RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.NO_RE_REGISTER_APPLICATIONS));
+			initHomeHeader();
 
 			List<RegistrationApprovalDTO> pendingApprovalRegistrations = registrationApprovalService
 					.getEnrollmentByStatus(RegistrationClientStatusCode.CREATED.getCode());
@@ -808,7 +831,8 @@ public class PacketHandlerController extends BaseController implements Initializ
 					}
 					ProcessSpecDto processSpecDto = identitySchemaDao.getProcessSpec(processSpec.getId(), version);
 					GridPane gridPane = buildRegistrationProcessPane(processSpecDto);
-					registrationGridPane.addRow(i.getAndIncrement(), gridPane);
+					int index = i.getAndIncrement();
+					registrationGridPane.add(gridPane, index % HOME_PROCESS_COLUMNS, index / HOME_PROCESS_COLUMNS);
 				} catch (RegBaseCheckedException e) {
 					LOGGER.error("Failed to build process pane {}", processSpec, e);
 				}
@@ -818,53 +842,132 @@ public class PacketHandlerController extends BaseController implements Initializ
 		}
 	}
 
+	private static final double HOME_TILE_HEIGHT = 176.0;
+	private static final String HOME_WELCOME_KEY = "homeWelcome";
+	private static final String PROCESS_DESCRIPTION_KEY_PREFIX = "processDescription.";
+
+	/**
+	 * Fills the Home header (welcome line, centre and machine) and wires the attention strip. The strip and the
+	 * end-of-day card follow the visibility the role check above gives {@code eodProcessGridPane}, and their
+	 * texts are bound to the existing count labels so they stay current whenever those are refreshed.
+	 */
+	private void initHomeHeader() {
+		try {
+			if (homeGreeting != null) {
+				String name = SessionContext.userContext().getName();
+				homeGreeting.setText(MessageFormat.format(getLabelOrDefault(HOME_WELCOME_KEY, "{0}"), name == null ? "" : name));
+			}
+			if (homeContext != null) {
+				StringBuilder context = new StringBuilder();
+				RegistrationCenterDetailDTO centre = SessionContext.userContext().getRegistrationCenterDetailDTO();
+				if (centre != null && centre.getRegistrationCenterName() != null) {
+					context.append(centre.getRegistrationCenterName()).append(" (")
+							.append(centre.getRegistrationCenterId()).append(")");
+				}
+				String machine = RegistrationSystemPropertiesChecker.getMachineId();
+				if (machine != null && !machine.isBlank()) {
+					if (context.length() > 0) {
+						context.append("  \u00B7  ");
+					}
+					context.append(machine);
+				}
+				homeContext.setText(context.toString());
+			}
+			if (attentionApprovalLbl != null) {
+				attentionApprovalLbl.textProperty().bind(pendingApprovalCountLbl.textProperty());
+			}
+			if (attentionReRegLbl != null) {
+				attentionReRegLbl.textProperty().bind(reRegistrationCountLbl.textProperty());
+			}
+			if (attentionStrip != null) {
+				attentionStrip.visibleProperty().bind(eodProcessGridPane.visibleProperty());
+				attentionStrip.managedProperty().bind(attentionStrip.visibleProperty());
+			}
+			if (eodCard != null) {
+				eodCard.visibleProperty().bind(eodProcessGridPane.visibleProperty());
+				eodCard.managedProperty().bind(eodCard.visibleProperty());
+			}
+		} catch (RuntimeException exception) {
+			// the dashboard must still load if any of this context is unavailable
+			LOGGER.error("Failed to initialise the home header", exception);
+		}
+	}
+
+	/** Label from the application-language bundle, or {@code fallback} when the key is not defined. */
+	private static final int HOME_PROCESS_COLUMNS = 4;
+
 	private void addParentRowConstraints(int size) {
+		// process cards are laid out as a grid of equal columns, one fixed-height row per HOME_PROCESS_COLUMNS cards
+		registrationGridPane.getColumnConstraints().clear();
+		for (int c = 0; c < HOME_PROCESS_COLUMNS; c++) {
+			ColumnConstraints columnConstraints = new ColumnConstraints();
+			columnConstraints.setPercentWidth(100.0 / HOME_PROCESS_COLUMNS);
+			registrationGridPane.getColumnConstraints().add(columnConstraints);
+		}
 		registrationGridPane.getRowConstraints().clear();
-		for(int i=0;i<size;i++) {
-			RowConstraints rowConstraints = new RowConstraints();
-			rowConstraints.setPercentHeight((double)100/size);
+		int rows = (size + HOME_PROCESS_COLUMNS - 1) / HOME_PROCESS_COLUMNS;
+		for(int i=0;i<rows;i++) {
+			// fixed-height rows so every Home tile has the same height regardless of the process count
+			RowConstraints rowConstraints = new RowConstraints(HOME_TILE_HEIGHT, HOME_TILE_HEIGHT, HOME_TILE_HEIGHT);
+			rowConstraints.setVgrow(Priority.NEVER);
 			registrationGridPane.getRowConstraints().add(rowConstraints);
 		}
 	}
 
 	private GridPane buildRegistrationProcessPane(ProcessSpecDto processSpecDto) {
+		// card: icon badge on top, process title below (same structure as the other Home cards)
 		GridPane gridPane = new GridPane();
-		gridPane.getStyleClass().add("operationalPaneDetailsSync");
+		gridPane.getStyleClass().addAll("homeTile", "homeCard", "processCard");
 		gridPane.setId(processSpecDto.getId());
-		RowConstraints rowConstraints = new RowConstraints();
-		rowConstraints.setPercentHeight(100);
-		gridPane.getRowConstraints().addAll(rowConstraints);
-		ColumnConstraints columnConstraint1 = new ColumnConstraints();
-		columnConstraint1.setPercentWidth(10);
-		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setPercentWidth(90);
-		gridPane.getColumnConstraints().addAll(columnConstraint1, columnConstraint2);
+		ColumnConstraints column = new ColumnConstraints();
+		column.setHgrow(Priority.ALWAYS);
+		gridPane.getColumnConstraints().add(column);
+		RowConstraints iconRow = new RowConstraints();
+		iconRow.setVgrow(Priority.NEVER);
+		RowConstraints titleRow = new RowConstraints();
+		titleRow.setVgrow(Priority.ALWAYS);
+		titleRow.setValignment(VPos.BOTTOM);
+		RowConstraints descriptionRow = new RowConstraints();
+		descriptionRow.setVgrow(Priority.NEVER);
+		gridPane.getRowConstraints().addAll(iconRow, titleRow, descriptionRow);
+		if (FlowType.NEW.name().equalsIgnoreCase(processSpecDto.getFlow())) {
+			gridPane.getStyleClass().add("primaryProcess");
+		}
 		gridPane.setOnMouseClicked(event -> {
 			selectLanguage(event);
 		});
-		VBox vBox = new VBox();
-		vBox.setAlignment(Pos.CENTER);
-		vBox.setPrefHeight(200);
-		vBox.setPrefWidth(100);
+		StackPane iconBadge = new StackPane();
+		iconBadge.getStyleClass().add("tileIcon");
 		ImageView imageView = new ImageView();
 		imageView.setId(processSpecDto.getId()+"_img");
 		imageView.setPreserveRatio(true);
 		imageView.setPickOnBounds(true);
-		imageView.setFitHeight(30);
-		imageView.setFitWidth(30);
+		imageView.setFitHeight(32);
+		imageView.setFitWidth(32);
 		try {
 			imageView.setImage(getImage(processSpecDto.getIcon(), true));
 		} catch (RegBaseCheckedException e) {
 			LOGGER.error("Failed to get process image", e);
 		}
-		vBox.getChildren().add(imageView);
-		gridPane.addColumn(0, vBox);
+		iconBadge.getChildren().add(imageView);
+		GridPane.setHalignment(iconBadge, HPos.LEFT);
+		gridPane.add(iconBadge, 0, 0);
 
 		Label label = new Label();
 		label.setText(processSpecDto.getLabel().get(ApplicationContext.applicationLanguage()));
 		label.setWrapText(true);
 		label.getStyleClass().add("operationalTitle");
-		gridPane.addColumn(1, label);
+		label.setMinHeight(Region.USE_PREF_SIZE);
+		gridPane.add(label, 0, 1);
+
+		String description = getLabelOrDefault(PROCESS_DESCRIPTION_KEY_PREFIX + processSpecDto.getFlow(), null);
+		if (description != null && !description.isBlank()) {
+			Label descriptionLabel = new Label(description);
+			descriptionLabel.setWrapText(true);
+			descriptionLabel.setMinHeight(Region.USE_PREF_SIZE);
+			descriptionLabel.getStyleClass().add("processDescription");
+			gridPane.add(descriptionLabel, 0, 2);
+		}
 		changeNodeOrientation(gridPane);
 		return gridPane;
 	}

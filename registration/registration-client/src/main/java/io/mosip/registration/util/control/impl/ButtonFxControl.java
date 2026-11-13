@@ -16,7 +16,6 @@ import io.mosip.registration.dto.schema.UiFieldDTO;
 import io.mosip.registration.service.sync.MasterSyncService;
 import io.mosip.registration.util.control.FxControl;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -82,8 +81,11 @@ public class ButtonFxControl extends FxControl {
 			labels.add(this.uiFieldDTO.getLabel().get(lCode));
 		});
 
-		fieldTitle.setText(String.join(RegistrationConstants.SLASH, labels)	+ getMandatorySuffix(uiFieldDTO));
-		hbox.getChildren().add(fieldTitle);
+		fieldTitle.setText(primaryLabel(labels) + getMandatorySuffix(uiFieldDTO));
+		// label above the options, like every other field; the HBox holds only the option buttons
+		simpleTypeVBox.setSpacing(6);
+		simpleTypeVBox.getChildren().add(fieldTitle);
+		simpleTypeVBox.getChildren().add(secondaryLabels(fieldName, labels));
 		simpleTypeVBox.getChildren().add(hbox);
 		simpleTypeVBox.getChildren().add(getLabel(uiFieldDTO.getId() + RegistrationConstants.ERROR_MSG, null,
 				RegistrationConstants.DemoGraphicFieldMessageLabel, false, simpleTypeVBox.getPrefWidth()));
@@ -157,8 +159,7 @@ public class ButtonFxControl extends FxControl {
 			val.forEach(genericDto -> {
 				Button button = new Button(genericDto.getName());
 				button.setId(uiFieldDTO.getId() + genericDto.getCode());
-				hBox.setSpacing(10);
-				hBox.setPadding(new Insets(10, 10, 10, 10));
+				hBox.setSpacing(8);
 				button.getStyleClass().addAll(residence, buttonStyle);
 				hBox.getChildren().add(button);
 				setListener(button);

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.registration.controller.TemplateTheme;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.RegistrationConstants;
 import io.mosip.registration.constants.RegistrationUIConstants;
@@ -97,6 +98,7 @@ public class AckReceiptController extends BaseController implements Initializabl
 		 */
 
 		WebEngine engine = webView.getEngine();
+		TemplateTheme.apply(engine);
 		// loads the generated HTML template content into webview
 		engine.loadContent(stringWriter.toString());
 		

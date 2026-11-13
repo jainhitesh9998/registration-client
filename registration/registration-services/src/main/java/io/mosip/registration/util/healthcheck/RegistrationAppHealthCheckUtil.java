@@ -4,6 +4,9 @@ import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_
 import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_NAME;
 
 import java.io.IOException;
+import java.nio.file.FileStore;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,12 +33,6 @@ import io.mosip.registration.context.ApplicationContext;
 import io.mosip.registration.util.restclient.RestClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import oshi.SystemInfo;
-import oshi.software.os.FileSystem;
-import oshi.software.os.OSFileStore;
-import oshi.software.os.OperatingSystem;
-import oshi.software.os.linux.LinuxOperatingSystem;
-import oshi.software.os.windows.WindowsOperatingSystem;
 
 /**
  * Registration Health Checker Utility.
@@ -48,18 +45,6 @@ import oshi.software.os.windows.WindowsOperatingSystem;
 public class RegistrationAppHealthCheckUtil {
 
 	private static final Logger LOGGER = AppConfig.getLogger(RegistrationAppHealthCheckUtil.class);
-
-	/** The system info. */
-	private static SystemInfo systemInfo;
-
-	/** The operating system. */
-	private static OperatingSystem operatingSystem;
-
-
-	static {
-		systemInfo = new SystemInfo();
-		operatingSystem = systemInfo.getOperatingSystem();
-	}
 
 	/**
 	 * This method checks for the Disk Space Availability.
@@ -80,21 +65,17 @@ public class RegistrationAppHealthCheckUtil {
 		LOGGER.info("REGISTRATION - REGISTRATIONAPPHEALTHCHECKUTIL - ISDISKSPACEAVAILABLE", APPLICATION_NAME,
 				APPLICATION_ID, "Registration Disk Space Checker had been called.");
 		boolean isSpaceAvailable = false;
-		FileSystem fileSystem = operatingSystem.getFileSystem();
-		String currentDirectory = System.getProperty("user.dir").substring(0, 3);
-		OSFileStore[] fileStores = fileSystem.getFileStores();
-		Long diskSpaceThreshold = 80000L;
-		for (OSFileStore fs : fileStores) {
-			if (currentDirectory.equalsIgnoreCase(fs.getMount())) {
-				if (fs.getUsableSpace() > diskSpaceThreshold) {
-					isSpaceAvailable = true;
-					LOGGER.info("REGISTRATION - REGISTRATIONAPPHEALTHCHECKUTIL - ISDISKSPACEAVAILABLE",
-							APPLICATION_NAME, APPLICATION_ID, "Required Disk Space Available.");
-				} else {
-					LOGGER.info("REGISTRATION - REGISTRATIONAPPHEALTHCHECKUTIL - ISDISKSPACEAVAILABLE",
-							APPLICATION_NAME, APPLICATION_ID, "Required Disk Space Not Available.");
-				}
-			}
+		long diskSpaceThreshold = 80000L;
+		try {
+			// java.nio resolves the file store of the working directory on every OS
+			// (the previous OSHI based lookup only matched Windows drive letters like "C:\")
+			FileStore fileStore = Files.getFileStore(Path.of(System.getProperty("user.dir")));
+			isSpaceAvailable = fileStore.getUsableSpace() > diskSpaceThreshold;
+			LOGGER.info("REGISTRATION - REGISTRATIONAPPHEALTHCHECKUTIL - ISDISKSPACEAVAILABLE", APPLICATION_NAME,
+					APPLICATION_ID, isSpaceAvailable ? "Required Disk Space Available." : "Required Disk Space Not Available.");
+		} catch (IOException exception) {
+			LOGGER.error("REGISTRATION - REGISTRATIONAPPHEALTHCHECKUTIL - ISDISKSPACEAVAILABLE", APPLICATION_NAME,
+					APPLICATION_ID, ExceptionUtils.getStackTrace(exception));
 		}
 		LOGGER.info("REGISTRATION - REGISTRATIONAPPHEALTHCHECKUTIL - ISDISKSPACEAVAILABLE", APPLICATION_NAME,
 				APPLICATION_ID, "Registration Disk Space Checker had been ended.");

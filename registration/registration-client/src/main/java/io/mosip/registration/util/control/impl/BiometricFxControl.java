@@ -137,10 +137,10 @@ public class BiometricFxControl extends FxControl {
 		label.getStyleClass().add(RegistrationConstants.QUALITY_BOX_LABEL);
 
 		GridPane gridPane = createGridPane();
-		gridPane.setHgap(10);
+		gridPane.setHgap("compact".equals(getBiometricFieldLayout()) ? 0 : 24);
 		gridPane.setId(fieldName);
 		gridPane.add(label,1,0);
-		GridPane.setHalignment(label, HPos.CENTER);
+		GridPane.setHalignment(label, HPos.LEFT);
 		GridPane.setValignment(label, VPos.TOP);
 		this.node = gridPane;
 
@@ -149,14 +149,14 @@ public class BiometricFxControl extends FxControl {
 			case "compact":
 				modalityListingNode = new HBox();
 				modalityListingNode.setId(uiFieldDTO.getId()+"_listing");
-				//((HBox)modalityListingNode).setSpacing(5);
+				((HBox)modalityListingNode).setSpacing(10);
 				((HBox)modalityListingNode).getChildren().addAll(modalityList);
 				gridPane.add(modalityListingNode,1,1);
 				break;
 			default:
 				modalityListingNode = new VBox();
 				modalityListingNode.setId(uiFieldDTO.getId()+"_listing");
-				//((VBox)modalityListingNode).setSpacing(5);
+				((VBox)modalityListingNode).setSpacing(10);
 				((VBox)modalityListingNode).getChildren().addAll(modalityList);
 				gridPane.add(modalityListingNode,0,1);
 				Parent captureDetails = null;
@@ -167,7 +167,7 @@ public class BiometricFxControl extends FxControl {
 					captureDetails.visibleProperty().bind(gridPane.visibleProperty());
 					captureDetails.managedProperty().bind(gridPane.managedProperty());
 
-					GridPane.setHalignment(captureDetails, HPos.CENTER);
+					GridPane.setHalignment(captureDetails, HPos.LEFT);
 					GridPane.setValignment(captureDetails, VPos.TOP);
 					gridPane.add(captureDetails,1,1);
 				} catch (IOException e) {
@@ -189,19 +189,20 @@ public class BiometricFxControl extends FxControl {
 	private GridPane createGridPane() {
 		GridPane gridPane = new GridPane();
 		
-		gridPane.setPadding(new Insets(50, 0, 0, 0));
+		gridPane.setPadding(new Insets(24, 0, 0, 0));
 		RowConstraints topRowConstraints = new RowConstraints();
 		topRowConstraints.setPercentHeight(5);
 		RowConstraints midRowConstraints = new RowConstraints();
 		midRowConstraints.setPercentHeight(95);
 		gridPane.getRowConstraints().addAll(topRowConstraints,midRowConstraints);
 
-		ColumnConstraints columnConstraint1 = new ColumnConstraints();
-		columnConstraint1.setPercentWidth(15);
+		// inline layout: fixed-width modality rail with the capture panel next to it (no dead gap between them);
+		// compact layout: no rail, the modality tiles start at the field's left edge like every other field
+		double railWidth = "compact".equals(getBiometricFieldLayout()) ? 0 : 152;
+		ColumnConstraints columnConstraint1 = new ColumnConstraints(railWidth, railWidth, railWidth);
 		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setPercentWidth(80);
-		ColumnConstraints columnConstraint3 = new ColumnConstraints();
-		columnConstraint3.setPercentWidth(5);
+		columnConstraint2.setHgrow(Priority.ALWAYS);
+		ColumnConstraints columnConstraint3 = new ColumnConstraints(0, 0, 0);
 		gridPane.getColumnConstraints().addAll(columnConstraint1, columnConstraint2,columnConstraint3);
 		return gridPane;
 	}
@@ -363,7 +364,11 @@ public class BiometricFxControl extends FxControl {
 			this.node.setVisible(true);
 			this.node.setManaged(true);
 
-			scanForModality(this.control, this.currentModality);
+			// The compact layout captures in a popup that must only open when the operator picks a modality;
+			// the inline layout re-renders its embedded capture pane for the current modality.
+			if (!"compact".equals(getBiometricFieldLayout())) {
+				scanForModality(this.control, this.currentModality);
+			}
 		}
 
 		List<String> requiredAttributes = requiredFieldValidator.getRequiredBioAttributes(uiFieldDTO, getRegistrationDTo());
@@ -449,6 +454,10 @@ public class BiometricFxControl extends FxControl {
 		if(exceptionPhotoNode != null) {
 			exceptionPhotoNode.setVisible(exceptionExists);
 			exceptionPhotoNode.setManaged(exceptionExists);
+			if (exceptionExists && currentModality != null) {
+				// status mark (warning until the photo is captured) as soon as the tile appears
+				addRemoveCaptureStatusMark(exceptionPhotoNode, Modality.EXCEPTION_PHOTO);
+			}
 			exceptionPhotoNode.getChildren().forEach( child -> {
 				child.setVisible(exceptionExists);
 				child.setManaged(exceptionExists);
@@ -482,9 +491,28 @@ public class BiometricFxControl extends FxControl {
 		displayExceptionPhoto();
 	}
 
+	@Override
+	public String getInvalidReason() {
+		boolean exceptionExists = getRegistrationDTo().isBiometricExceptionAvailable(this.uiFieldDTO.getId());
+		if (this.uiFieldDTO.isExceptionPhotoRequired() && exceptionExists
+				&& !biometricsController.isBiometricExceptionProofCollected(this.uiFieldDTO.getId())) {
+			return io.mosip.registration.constants.RegistrationUIConstants
+					.getMessageLanguageSpecific(io.mosip.registration.constants.RegistrationUIConstants.BIOMETRIC_EXCEPTION_PHOTO_MISSING);
+		}
+		return null;
+	}
+
 	private void addRemoveCaptureStatusMark(HBox pane, Modality modality) {
 		if (pane.getChildren().size() > 1) {
 			pane.getChildren().remove(1);
+		}
+
+		// exceptions are marked but their photo is not captured yet: flag the exception photo tile
+		if (modality.equals(Modality.EXCEPTION_PHOTO)
+				&& getRegistrationDTo().isBiometricExceptionAvailable(uiFieldDTO.getId())
+				&& !biometricsController.isBiometricExceptionProofCollected(uiFieldDTO.getId())) {
+			pane.getChildren().add(addCompletionImg(getCompletionImgPath(true)));
+			return;
 		}
 
 		boolean isExceptionsMarked = isAnyExceptions(modality);

@@ -52,6 +52,8 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import io.mosip.registration.dto.RegistrationDTO;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -474,6 +476,8 @@ public class GenericBiometricsController extends BaseController {
 
 					if (mdmBioDevice == null) {
 						generateAlert(RegistrationConstants.ERROR, RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.NO_DEVICE_FOUND));
+						SessionContext.setAutoLogout(true);
+						disableEnableBiometricPane(false);
 						return;
 					}
 
@@ -486,6 +490,9 @@ public class GenericBiometricsController extends BaseController {
 						deviceSpecificationFactory.initializeDeviceMap(true);
 						streamer.setUrlStream(null);
 						generateAlert(RegistrationConstants.ERROR, RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.STREAMING_ERROR));
+						// let the operator retry or pick another modality
+						SessionContext.setAutoLogout(true);
+						disableEnableBiometricPane(false);
 						return;
 					}
 					rCaptureTaskService();
@@ -1399,10 +1406,20 @@ public class GenericBiometricsController extends BaseController {
 		this.configBioAttributes = configBioAttributes;
 		this.nonConfigBioAttributes = nonConfigBioAttributes;
 
+		if (biometricPopUpStage != null && biometricPopUpStage.isShowing()) {
+			biometricPopUpStage.close();
+		}
 		biometricPopUpStage = new Stage();
 		biometricPopUpStage.initStyle(StageStyle.UNDECORATED);
 		biometricPopUpStage.setResizable(false);
-		Parent scanPopup = BaseController.load(getClass().getResource(RegistrationConstants.BIOMETRIC_FXML));
+		// This controller is prototype scoped: loading the popup through the Spring controller factory would
+		// inject the @FXML fields into a different instance, so bind the FXML to this instance instead.
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(RegistrationConstants.BIOMETRIC_FXML),
+				ApplicationContext.getBundle(getPopupLanguage(), RegistrationConstants.LABELS));
+		loader.setControllerFactory(type -> this);
+		Parent scanPopup = loader.load();
+		this.scanBtn.setId(this.fxControl.getUiSchemaDTO().getId() + "ScanBtn");
+		this.qualityScore.setId(this.fxControl.getUiSchemaDTO().getId() + "QualityScore");
 
 		Scene scene = new Scene(scanPopup, width, height);
 		scene.getStylesheets().add(ClassLoader.getSystemClassLoader().getResource(getCssName()).toExternalForm());
@@ -1412,6 +1429,15 @@ public class GenericBiometricsController extends BaseController {
 		biometricPopUpStage.show();
 
 		displayBiometric(modality);
+	}
+
+	private String getPopupLanguage() {
+		RegistrationDTO registrationDTO = getRegistrationDTOFromSession();
+		if (registrationDTO != null && registrationDTO.getSelectedLanguagesByApplicant() != null
+				&& !registrationDTO.getSelectedLanguagesByApplicant().isEmpty()) {
+			return registrationDTO.getSelectedLanguagesByApplicant().get(0);
+		}
+		return ApplicationContext.applicationLanguage();
 	}
 
 	public void initializeWithoutStage(FxControl fxControl, Modality modality, List<String> configBioAttributes,
