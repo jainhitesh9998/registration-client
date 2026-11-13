@@ -22,6 +22,7 @@ import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManager;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManagerBuilder;
 import io.mosip.kernel.core.util.CryptoUtil;
+import io.mosip.registration.controller.TemplateTheme;
 import io.mosip.registration.audit.AuditManagerService;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.AuditEvent;
@@ -157,6 +158,7 @@ public class HtmlFxControl extends FxControl {
         webView.setId(uiFieldDTO.getId());
         String content = getContent(langCode);
         contentHash.put(langCode, CryptoUtil.computeFingerPrint(content, null));
+        TemplateTheme.apply(webView.getEngine());
         webView.getEngine().loadContent(content);
         webView.getEngine()
                 .documentProperty()

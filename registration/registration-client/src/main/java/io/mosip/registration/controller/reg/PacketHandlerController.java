@@ -64,6 +64,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -75,7 +76,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.NonNull;
 
@@ -821,9 +824,8 @@ public class PacketHandlerController extends BaseController implements Initializ
 		}
 	}
 
-	private static final double HOME_TILE_HEIGHT = 88.0;
+	private static final double HOME_TILE_HEIGHT = 156.0;
 	private static final int HOME_PROCESS_COLUMNS = 4;
-	private static final double HOME_TILE_ICON_WIDTH = 72.0;
 
 	private void addParentRowConstraints(int size) {
 		// process cards are laid out as a grid of equal columns, one fixed-height row per HOME_PROCESS_COLUMNS cards
@@ -844,44 +846,45 @@ public class PacketHandlerController extends BaseController implements Initializ
 	}
 
 	private GridPane buildRegistrationProcessPane(ProcessSpecDto processSpecDto) {
+		// card: icon badge on top, process title below (same structure as the other Home cards)
 		GridPane gridPane = new GridPane();
-		gridPane.getStyleClass().add("homeTile");
+		gridPane.getStyleClass().addAll("homeTile", "homeCard", "processCard");
 		gridPane.setId(processSpecDto.getId());
-		RowConstraints rowConstraints = new RowConstraints();
-		rowConstraints.setPercentHeight(100);
-		gridPane.getRowConstraints().addAll(rowConstraints);
-		// fixed icon column so icons and titles line up with the other Home tiles
-		ColumnConstraints columnConstraint1 = new ColumnConstraints(HOME_TILE_ICON_WIDTH, HOME_TILE_ICON_WIDTH, HOME_TILE_ICON_WIDTH);
-		columnConstraint1.setHalignment(HPos.CENTER);
-		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setHgrow(Priority.ALWAYS);
-		gridPane.getColumnConstraints().addAll(columnConstraint1, columnConstraint2);
+		ColumnConstraints column = new ColumnConstraints();
+		column.setHgrow(Priority.ALWAYS);
+		gridPane.getColumnConstraints().add(column);
+		RowConstraints iconRow = new RowConstraints();
+		iconRow.setVgrow(Priority.NEVER);
+		RowConstraints titleRow = new RowConstraints();
+		titleRow.setVgrow(Priority.ALWAYS);
+		titleRow.setValignment(VPos.BOTTOM);
+		gridPane.getRowConstraints().addAll(iconRow, titleRow);
 		gridPane.setOnMouseClicked(event -> {
 			selectLanguage(event);
 		});
-		VBox vBox = new VBox();
-		vBox.setAlignment(Pos.CENTER);
-		vBox.setPrefHeight(200);
-		vBox.setPrefWidth(100);
+		StackPane iconBadge = new StackPane();
+		iconBadge.getStyleClass().add("tileIcon");
 		ImageView imageView = new ImageView();
 		imageView.setId(processSpecDto.getId()+"_img");
 		imageView.setPreserveRatio(true);
 		imageView.setPickOnBounds(true);
-		imageView.setFitHeight(30);
-		imageView.setFitWidth(30);
+		imageView.setFitHeight(32);
+		imageView.setFitWidth(32);
 		try {
 			imageView.setImage(getImage(processSpecDto.getIcon(), true));
 		} catch (RegBaseCheckedException e) {
 			LOGGER.error("Failed to get process image", e);
 		}
-		vBox.getChildren().add(imageView);
-		gridPane.addColumn(0, vBox);
+		iconBadge.getChildren().add(imageView);
+		GridPane.setHalignment(iconBadge, HPos.LEFT);
+		gridPane.add(iconBadge, 0, 0);
 
 		Label label = new Label();
 		label.setText(processSpecDto.getLabel().get(ApplicationContext.applicationLanguage()));
 		label.setWrapText(true);
 		label.getStyleClass().add("operationalTitle");
-		gridPane.addColumn(1, label);
+		label.setMinHeight(Region.USE_PREF_SIZE);
+		gridPane.add(label, 0, 1);
 		changeNodeOrientation(gridPane);
 		return gridPane;
 	}

@@ -16,6 +16,7 @@ import org.w3c.dom.events.EventTarget;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManagerBuilder;
+import io.mosip.registration.controller.TemplateTheme;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.AuditEvent;
 import io.mosip.registration.constants.AuditReferenceIdTypes;
@@ -184,6 +185,7 @@ public class RegistrationPreviewController extends BaseController implements Ini
 				if (templateResponse != null && templateResponse.getSuccessResponseDTO() != null) {
 					Writer stringWriter = (Writer) templateResponse.getSuccessResponseDTO().getOtherAttributes()
 							.get(RegistrationConstants.TEMPLATE_NAME);
+					TemplateTheme.apply(webView.getEngine());
 					webView.getEngine().loadContent(stringWriter.toString());
 					webView.getEngine().documentProperty()
 							.addListener((observableValue, oldValue, document) -> listenToButton(document));

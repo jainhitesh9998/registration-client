@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.registration.controller.TemplateTheme;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.ProcessNames;
 import io.mosip.registration.constants.RegistrationConstants;
@@ -250,6 +251,7 @@ public class ReRegistrationController extends BaseController implements Initiali
 				while ((line = bufferedReader.readLine()) != null) {
 					acknowledgementContent.append(line);
 				}
+				TemplateTheme.apply(webView.getEngine());
 				webView.getEngine().loadContent(acknowledgementContent.toString());
 			} catch (FileNotFoundException fileNotFoundException) {
 				LOGGER.error("RE_REGISTRATION_CONTROLLER - REGSITRATION_ACKNOWLEDGEMENT_PAGE_LOADING_FAILED",

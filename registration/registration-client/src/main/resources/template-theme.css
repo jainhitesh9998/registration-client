@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Theme layer for server-synced HTML templates (acknowledgement, preview,
+   dashboard, consent) rendered in the client's WebViews.
+
+   Templates are master data synced from the server, so they are not edited
+   here: this sheet is applied as the WebView *user stylesheet*
+   (TemplateTheme.apply). `!important` is required because templates carry
+   their own <style> blocks and inline styles.
+
+   Values mirror the UX4G tokens in application.css.
+   ========================================================================== */
+
+@font-face {
+	font-family: 'Noto Sans';
+	src: url('fonts/NotoSans-Regular.ttf');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'Noto Sans';
+	src: url('fonts/NotoSans-Medium.ttf');
+	font-weight: 500;
+}
+
+@font-face {
+	font-family: 'Noto Sans';
+	src: url('fonts/NotoSans-SemiBold.ttf');
+	font-weight: 600;
+}
+
+@font-face {
+	font-family: 'Noto Sans';
+	src: url('fonts/NotoSans-Bold.ttf');
+	font-weight: 700;
+}
+
+/* --- Base ---------------------------------------------------------------- */
+html, body {
+	font-family: 'Noto Sans', 'Segoe UI', Arial, sans-serif !important;
+	color: #171717 !important;
+	background-color: #FBFBFD !important;
+	-webkit-font-smoothing: antialiased;
+}
+
+body, table, td, th, p, span, div, li, label {
+	font-family: 'Noto Sans', 'Segoe UI', Arial, sans-serif !important;
+}
+
+table, td, th, .head {
+	font-size: 13px !important;
+	line-height: 1.45 !important;
+}
+
+hr {
+	border: 0 !important;
+	border-top: 1px solid #E4E2EC !important;
+	margin: 12px 0 !important;
+}
+
+b, strong, h1, h2, h3, h4, h5 {
+	font-weight: 600 !important;
+	color: #171717;
+}
+
+/* section headings ("Demographic Information", "Documents", ...) */
+.head, .head b {
+	font-size: 15px !important;
+	color: #24145C !important;
+	letter-spacing: 0.2px;
+}
+
+/* field captions (labels above values) */
+.headings,
+.demoDiv > table > tbody > tr > th,
+th {
+	color: #737373 !important;
+	font-size: 11px !important;
+	font-weight: 500 !important;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+}
+
+h1.headings {
+	font-size: 12px !important;
+	margin: 16px 0 6px 0 !important;
+}
+
+td {
+	color: #171717;
+	padding-top: 2px;
+	padding-bottom: 8px;
+}
+
+li { color: #A1A1A1 !important; }
+li span { color: #171717 !important; font-size: 12px !important; }
+
+/* --- Consent block ------------------------------------------------------- */
+.consent-block {
+	border: 1px solid #D8D6E2 !important;
+	border-radius: 12px !important;
+	background-color: #FFFFFF !important;
+	padding: 16px !important;
+}
+
+input[type="radio"] + label:before {
+	border-color: #928EA3 !important;
+}
+
+input[type="radio"]:checked + label:before {
+	background-color: #4A2BC2 !important;
+	border-color: #4A2BC2 !important;
+}
+
+/* --- Dashboard ----------------------------------------------------------- */
+header {
+	text-align: left !important;
+	padding: 24px 24px 8px 24px !important;
+}
+
+header h2 {
+	font-size: 22px !important;
+	margin: 0 !important;
+}
+
+.row {
+	padding: 0 14px;
+}
+
+.column {
+	background-color: #FFFFFF !important;
+	border: 1px solid #E4E2EC !important;
+	border-radius: 12px !important;
+	padding: 16px 20px !important;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+.column h3, .column h4 {
+	color: #24145C !important;
+	font-size: 14px !important;
+	margin: 4px 0 10px 0 !important;
+}
+
+.column-rect {
+	border-radius: 12px !important;
+	height: auto !important;
+	min-height: 104px;
+	padding: 16px 12px !important;
+	color: #171717 !important;
+	border: 1px solid transparent;
+}
+
+.column-rect h2 {
+	font-size: 32px !important;
+	margin: 0 0 4px 0 !important;
+}
+
+.column-rect p {
+	font-size: 12px !important;
+	font-weight: 500;
+	margin: 0 !important;
+}
+
+/* packets created / pending EOD / pending upload: UX4G info, warning, danger tints */
+.buttons-column .row .column-rect:nth-child(1) {
+	background-color: #F2EFFF !important;
+	border-color: #DCD4FF;
+}
+.buttons-column .row .column-rect:nth-child(1) h2 { color: #4A2BC2 !important; }
+
+.buttons-column .row .column-rect:nth-child(2) {
+	background-color: #FFF7E6 !important;
+	border-color: #FFE7BF;
+}
+.buttons-column .row .column-rect:nth-child(2) h2 { color: #D46B08 !important; }
+
+.buttons-column .row .column-rect:nth-child(3) {
+	background-color: #FFECEE !important;
+	border-color: #FFD3D6;
+}
+.buttons-column .row .column-rect:nth-child(3) h2 { color: #DB372D !important; }
+
+.buttons-column .row {
+	padding: 0;
+}
+
+/* --- Scrollbars inside template views ------------------------------------ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #D8D6E2; border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }

@@ -852,6 +852,7 @@ public class GenericController extends BaseController {
 			webView.setId("webView");
 			webView.prefWidthProperty().bind(tabPane.widthProperty());
 			webView.prefHeightProperty().bind(tabPane.heightProperty());
+			TemplateTheme.apply(webView.getEngine());
 			webView.getEngine().loadContent(content);
 			final GridPane gridPane = new GridPane();
 			gridPane.prefWidthProperty().bind(tabPane.widthProperty());

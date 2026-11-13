@@ -28,6 +28,7 @@ import org.springframework.stereotype.Controller;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.registration.controller.TemplateTheme;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.ProcessNames;
 import io.mosip.registration.constants.RegistrationClientStatusCode;
@@ -343,6 +344,7 @@ public class RegistrationApprovalController extends BaseController implements In
 			try{
 				String acknowledgementContent = packetHandlerService.getAcknowledgmentReceipt(table.getSelectionModel().getSelectedItem().getPacketId(),
 						table.getSelectionModel().getSelectedItem().getAcknowledgementFormPath());
+				TemplateTheme.apply(webView.getEngine());
 				webView.getEngine().loadContent(acknowledgementContent);
 			} catch (RegBaseCheckedException | io.mosip.kernel.core.exception.IOException ex) {
 				LOGGER.error("REGSITRATION_ACKNOWLEDGEMNT_PAGE_LOADING_FAILED", ex);

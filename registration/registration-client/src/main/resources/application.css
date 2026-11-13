@@ -69,7 +69,7 @@
 
 	/* Modena integration so un-styled controls follow the theme */
 	-fx-font-family: 'Noto Sans';
-	-fx-font-size: 14px;
+	-fx-font-size: 15px;
 	-fx-accent: -mx-primary;
 	-fx-focus-color: -mx-primary;
 	-fx-faint-focus-color: #4A2BC222;
@@ -3291,16 +3291,17 @@ Working on new Css by taleev
 /* --- Home tiles (operational, registration and end-of-day actions) ---- */
 .homeTile {
 	-fx-background-color: -mx-surface;
-	-fx-background-radius: 12;
+	-fx-background-radius: 14;
 	-fx-border-color: -mx-border-subtle;
-	-fx-border-radius: 12;
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 6.0, 0.0, 0.0, 1.0);
+	-fx-border-radius: 14;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10.0, 0.0, 0.0, 2.0);
 	-fx-cursor: hand;
 }
 
 .homeTile:hover {
-	-fx-background-color: -mx-primary-soft;
+	-fx-background-color: -mx-surface;
 	-fx-border-color: -mx-primary-soft-border;
+	-fx-effect: dropshadow(gaussian, rgba(36, 20, 92, 0.12), 18.0, 0.0, 0.0, 6.0);
 }
 
 .homeTile:pressed {
@@ -3512,8 +3513,8 @@ Working on new Css by taleev
 }
 
 .homePage {
-	-fx-padding: 32 32 16 32;
-	-fx-spacing: 32;
+	-fx-padding: 32 40 24 40;
+	-fx-spacing: 36;
 }
 
 .homeSection {
@@ -3526,8 +3527,8 @@ Working on new Css by taleev
 
 .homeSectionTitle {
 	-fx-font-family: 'Noto Sans SemiBold';
-	-fx-font-size: 16px;
-	-fx-text-fill: -mx-text-secondary;
+	-fx-font-size: 18px;
+	-fx-text-fill: -mx-text;
 }
 
 .homeBanner {
@@ -3544,7 +3545,7 @@ Working on new Css by taleev
 
 #registrationGridPane .homeTile .operationalTitle {
 	-fx-font-family: 'Noto Sans SemiBold';
-	-fx-font-size: 16px;
+	-fx-font-size: 18px;
 	-fx-text-fill: -mx-text;
 }
 
@@ -3599,30 +3600,6 @@ Working on new Css by taleev
 .progress-barGreen > .track,
 .progress-barRed > .track {
 	-fx-background-color: -mx-border-subtle;
-}
-
-/* --- Uniform form controls ------------------------------------------------
-   One standard width for every text input and dropdown, whatever its label or
-   value length; date parts are the only compact inputs. */
-.demoGraphicTextField,
-.demoGraphicTextFieldOnType,
-.demoGraphicTextFieldFocused,
-.demographicCombobox,
-.demographicComboboxFocused,
-.documentCombobox,
-.uinUpdateTextFiledStyle,
-.preregFetchBtnStyle {
-	-fx-pref-width: 360px;
-	-fx-min-width: 360px;
-	-fx-max-width: 360px;
-}
-
-.dobFieldGroup .demoGraphicTextField,
-.dobFieldGroup .demoGraphicTextFieldOnType,
-.dobFieldGroup .demoGraphicTextFieldFocused {
-	-fx-pref-width: 96px;
-	-fx-min-width: 96px;
-	-fx-max-width: 96px;
 }
 
 /* chips: identical size regardless of label length */
@@ -3791,4 +3768,180 @@ Working on new Css by taleev
 .loginFormPanel #footer-section .label {
 	-fx-text-fill: -mx-text-muted;
 	-fx-font-size: 12px;
+}
+
+/* --- Home cards ------------------------------------------------------------ */
+.homeCard {
+	-fx-padding: 20;
+	-fx-vgap: 14;
+}
+
+.homeCard .tileIcon {
+	-fx-min-width: 44px;
+	-fx-pref-width: 44px;
+	-fx-max-width: 44px;
+	-fx-min-height: 44px;
+	-fx-pref-height: 44px;
+	-fx-max-height: 44px;
+	-fx-background-color: -mx-primary-soft;
+	-fx-background-radius: 12;
+}
+
+.processCard {
+	-fx-padding: 24;
+}
+
+.processCard .tileIcon {
+	-fx-min-width: 56px;
+	-fx-pref-width: 56px;
+	-fx-max-width: 56px;
+	-fx-min-height: 56px;
+	-fx-pref-height: 56px;
+	-fx-max-height: 56px;
+	-fx-background-radius: 14;
+}
+
+.homeCard .tileText {
+	-fx-spacing: 4;
+}
+
+.homeCard .operationalTitle {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 15px;
+	-fx-text-fill: -mx-text;
+}
+
+.homeCard .operationalDetails {
+	-fx-font-size: 12px;
+	-fx-text-fill: -mx-text-muted;
+}
+
+.homeCard .progress-bar > .track {
+	-fx-background-color: transparent;
+}
+
+/* --- Form field slots ---------------------------------------------------------
+   Fields share one slot width so rows line up in a 3-column rhythm on the wide
+   registration card: a text input + its keyboard suffix = a dropdown = 484px.
+   Date parts are the only compact inputs. */
+.demoGraphicTextField,
+.demoGraphicTextFieldOnType,
+.demoGraphicTextFieldFocused,
+.uinUpdateTextFiledStyle,
+.preregFetchBtnStyle {
+	-fx-pref-width: 440px;
+	-fx-min-width: 440px;
+	-fx-max-width: 440px;
+}
+
+.demographicCombobox,
+.demographicComboboxFocused,
+.documentCombobox {
+	-fx-pref-width: 484px;
+	-fx-min-width: 484px;
+	-fx-max-width: 484px;
+}
+
+.dobFieldGroup .demoGraphicTextField,
+.dobFieldGroup .demoGraphicTextFieldOnType,
+.dobFieldGroup .demoGraphicTextFieldFocused {
+	-fx-pref-width: 104px;
+	-fx-min-width: 104px;
+	-fx-max-width: 104px;
+}
+
+.demoGraphicTextField,
+.demoGraphicTextFieldOnType,
+.demoGraphicTextFieldFocused,
+.demographicCombobox,
+.demographicComboboxFocused,
+.documentCombobox,
+.documentTextField,
+.uinUpdateTextFiledStyle,
+.searchBoxTextStyle,
+.filterCombobox,
+.preregFetchBtnStyle,
+.inputGroup > .iconsHBox {
+	-fx-pref-height: 44px;
+	-fx-min-height: 44px;
+}
+
+.demoGraphicFieldLabel,
+.demoGraphicFieldLabelOnType,
+.buttonsLabel,
+.additionaInfoReqIdLabel {
+	-fx-font-size: 14px;
+}
+
+.contiuneButton,
+.backButton,
+.approveButton,
+.rejectButton,
+.ackPageButton,
+.ackBackButton,
+.residence,
+.selectedResidence,
+.genderButton,
+.genderSelectedButton {
+	-fx-min-height: 44px;
+}
+
+/* --- Selectable option cards (Update UIN: which details to update) ---------- */
+.updateUinCheckBox,
+.updateUinCheckBoxSelected {
+	-fx-pref-width: 280px;
+	-fx-min-width: 280px;
+	-fx-max-width: 280px;
+	-fx-min-height: 56px;
+	-fx-pref-height: 56px;
+	-fx-padding: 0 16 0 16;
+	-fx-graphic-text-gap: 12;
+	-fx-font-family: 'Noto Sans Medium';
+	-fx-font-size: 14px;
+	-fx-text-fill: -mx-text;
+	-fx-border-width: 0;
+	-fx-border-color: transparent;
+	-fx-background-color: -mx-control-border, -mx-field;
+	-fx-background-insets: 0, 1;
+	-fx-background-radius: 12, 11;
+	-fx-cursor: hand;
+}
+
+.updateUinCheckBox:hover {
+	-fx-background-color: -mx-primary, -mx-field;
+}
+
+.updateUinCheckBoxSelected {
+	-fx-background-color: -mx-primary, -mx-primary-soft;
+	-fx-background-insets: 0, 2;
+	-fx-text-fill: -mx-primary-pressed;
+}
+
+.updateUinCheckBoxCommon .check-box > .box,
+.check-box > .box {
+	-fx-background-color: -mx-control-border, -mx-field;
+	-fx-background-insets: 0, 1.5;
+	-fx-background-radius: 5, 4;
+	-fx-border-width: 0;
+	-fx-padding: 4;
+}
+
+.updateUinCheckBoxCommon .check-box:selected > .box,
+.check-box:selected > .box {
+	-fx-background-color: -mx-primary, -mx-primary;
+}
+
+.updateUinCheckBoxCommon .check-box:selected > .box > .mark,
+.check-box:selected > .box > .mark {
+	-fx-background-color: -mx-on-primary;
+}
+
+.tileProgress {
+	-fx-padding: 6 0 0 0;
+}
+
+/* action buttons size to their label (never truncate) */
+.ackPageButton,
+.ackBackButton {
+	-fx-min-width: 200px;
 }

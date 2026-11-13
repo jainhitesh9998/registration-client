@@ -27,16 +27,18 @@ All visual values are tokens on `.root` in
 | Spacing | 4px grid (8 / 12 / 16 / 24 / 32); 32px page margins, 24px gutters |
 | Radius | 8 for controls, 12 for cards, 999 for chips |
 | Elevation | Soft key + ambient shadows (levels 1-2) |
-| Controls | 40px inputs and buttons; uniform 360px inputs and dropdowns; 96px date parts; fixed-width chips |
+| Type and controls | 15px base, 44px inputs and buttons (UX4G minimum target); fields in a 484px slot so rows form a 3-column grid; 104px date parts; fixed-width chips |
 
 ## Screens redesigned
 
 | Screen | What changed |
 | --- | --- |
 | App bar (`Header.fxml`) | One 56px flow: logo, home, and pill chips for operator / centre / machine on the left; status, settings and menu on the right |
-| Home (`RegistrationOfficerPacketLayout.fxml`) | Registration tasks first, as a row of four action cards; operational and end-of-day tasks as two even columns of list cards |
+| Home (`RegistrationOfficerPacketLayout.fxml`) | Every action is a card (icon badge, title, meta line) in an even grid: registration processes as four large primary cards, operational and end-of-day tasks in a 6-column grid of identical cards |
 | Registration flow (`GenericRegistrationLayout.fxml`) | Page title above the steps, the steps in one full-width card with underline tabs, an action bar with the status message and primary action |
 | Form fields (code-built) | Labels above inputs (6px gap); hidden validation and transliteration helpers no longer reserve space; chip groups labelled like other fields; 24/16px gaps |
+| Update UIN | "Details to update" are selectable option cards (rounded-square checkbox, clear selected state) instead of round pills |
+| Server HTML templates | Acknowledgement, preview, dashboard and consent are themed by a client-side layer (`template-theme.css`, applied as the WebView user stylesheet through `TemplateTheme.apply`). Template data is not modified, so the theme survives every sync |
 | Pending approval | Breadcrumb, title and Approve/Reject header; list and preview as matching cards; action bar with guidance and Authenticate |
 | Login (`RegistrationLogin.fxml`) | Split layout: a brand panel (illustration under an indigo scrim, MOSIP logo, product name) and a sign-in panel with the form vertically centred. Cards collapse when hidden, and the language picker collapses when unused |
 | Everything else | Picks up the tokens: tables, dialogs, menus, settings, biometrics, onboarding, upload, re-registration |
@@ -92,8 +94,10 @@ from `mosip/mosip-data`. A dev-only harness, kept outside this repo, seeded that
 
 ## Notes
 
-- **Dashboard** and the **preview/acknowledgement** pages are server-synced HTML templates, so their
-  inner styling (bright tiles, pink borders, serif text) comes from the template data, not from client CSS.
+- **Dashboard**, **preview** and **acknowledgement** bodies are server-synced templates. On screen, the
+  client theme layer restyles them; printed or stored copies keep the template's own styling unless the
+  templates are also updated on the server. The `$keyList.get("activityValue")` text on the Dashboard is an
+  unresolved variable in MOSIP's sample template data.
 - **Pre-existing on `develop`, not changed here:** `UpdateUINController` wires a hover listener to
   `backBtn`, but `UpdateUIN.fxml` has no such element. The NPE is caught and logged, and the screen still
   works.
