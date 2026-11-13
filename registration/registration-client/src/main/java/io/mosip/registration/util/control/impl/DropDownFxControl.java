@@ -130,7 +130,7 @@ public class DropDownFxControl extends FxControl {
 		Label messageLabel = getLabel(uiFieldDTO.getId() + RegistrationConstants.MESSAGE, null,
 				RegistrationConstants.DEMOGRAPHIC_FIELD_LABEL, false, simpleTypeVBox.getPrefWidth());
 		messageLabel.setMaxWidth(200);
-		simpleTypeVBox.getChildren().add(messageLabel);
+		simpleTypeVBox.getChildren().add(collapseWhenHidden(messageLabel));
 
 		changeNodeOrientation(simpleTypeVBox, langCode);
 

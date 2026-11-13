@@ -434,11 +434,11 @@ public class GenericController extends BaseController {
 		gridPane.getRowConstraints().addAll(topRowConstraints,midRowConstraints, bottomRowConstraints);
 
 		ColumnConstraints columnConstraint1 = new ColumnConstraints();
-		columnConstraint1.setPercentWidth(5);
+		columnConstraint1.setPercentWidth(3);
 		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setPercentWidth(90);
+		columnConstraint2.setPercentWidth(94);
 		ColumnConstraints columnConstraint3 = new ColumnConstraints();
-		columnConstraint3.setPercentWidth(5);
+		columnConstraint3.setPercentWidth(3);
 
 		gridPane.getColumnConstraints().addAll(columnConstraint1, columnConstraint2,
 				columnConstraint3);
@@ -454,8 +454,8 @@ public class GenericController extends BaseController {
 		ColumnConstraints columnConstraint = new ColumnConstraints();
 		columnConstraint.setPercentWidth(100);
 		groupGridPane.getColumnConstraints().add(columnConstraint);
-		groupGridPane.setHgap(20);
-		groupGridPane.setVgap(20);
+		groupGridPane.setHgap(24);
+		groupGridPane.setVgap(24);
 		return groupGridPane;
 	}
 
@@ -756,8 +756,8 @@ public class GenericController extends BaseController {
 			for(Entry<String, List<UiFieldDTO>> groupEntry : screenFieldGroups.entrySet()) {
 				FlowPane groupFlowPane = new FlowPane();
 				groupFlowPane.prefWidthProperty().bind(gridPane.widthProperty());
-				groupFlowPane.setHgap(20);
-				groupFlowPane.setVgap(20);
+				groupFlowPane.setHgap(24);
+				groupFlowPane.setVgap(16);
 
 				for(UiFieldDTO fieldDTO : groupEntry.getValue()) {
 					try {

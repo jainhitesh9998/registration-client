@@ -810,7 +810,8 @@ public class PacketHandlerController extends BaseController implements Initializ
 					}
 					ProcessSpecDto processSpecDto = identitySchemaDao.getProcessSpec(processSpec.getId(), version);
 					GridPane gridPane = buildRegistrationProcessPane(processSpecDto);
-					registrationGridPane.addRow(i.getAndIncrement(), gridPane);
+					int index = i.getAndIncrement();
+					registrationGridPane.add(gridPane, index % HOME_PROCESS_COLUMNS, index / HOME_PROCESS_COLUMNS);
 				} catch (RegBaseCheckedException e) {
 					LOGGER.error("Failed to build process pane {}", processSpec, e);
 				}
@@ -820,12 +821,21 @@ public class PacketHandlerController extends BaseController implements Initializ
 		}
 	}
 
-	private static final double HOME_TILE_HEIGHT = 80.0;
+	private static final double HOME_TILE_HEIGHT = 88.0;
+	private static final int HOME_PROCESS_COLUMNS = 4;
 	private static final double HOME_TILE_ICON_WIDTH = 72.0;
 
 	private void addParentRowConstraints(int size) {
+		// process cards are laid out as a grid of equal columns, one fixed-height row per HOME_PROCESS_COLUMNS cards
+		registrationGridPane.getColumnConstraints().clear();
+		for (int c = 0; c < HOME_PROCESS_COLUMNS; c++) {
+			ColumnConstraints columnConstraints = new ColumnConstraints();
+			columnConstraints.setPercentWidth(100.0 / HOME_PROCESS_COLUMNS);
+			registrationGridPane.getColumnConstraints().add(columnConstraints);
+		}
 		registrationGridPane.getRowConstraints().clear();
-		for(int i=0;i<size;i++) {
+		int rows = (size + HOME_PROCESS_COLUMNS - 1) / HOME_PROCESS_COLUMNS;
+		for(int i=0;i<rows;i++) {
 			// fixed-height rows so every Home tile has the same height regardless of the process count
 			RowConstraints rowConstraints = new RowConstraints(HOME_TILE_HEIGHT, HOME_TILE_HEIGHT, HOME_TILE_HEIGHT);
 			rowConstraints.setVgrow(Priority.NEVER);

@@ -92,7 +92,7 @@
                                        <children>
                                           <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" prefViewportHeight="372.0" prefViewportWidth="610.0" styleClass="uinupdate-scroll-pane" vbarPolicy="NEVER">
                                              <content>
-                                                <FlowPane fx:id="parentFlowPane" prefHeight="372.0" prefWidth="${contentGridPane.width}" />
+                                                <FlowPane fx:id="parentFlowPane" vgap="12.0" prefHeight="372.0" prefWidth="${contentGridPane.width}" />
                                              </content>
                                           </ScrollPane>
                                        </children>

@@ -1,43 +1,54 @@
-# Registration Client UI refresh
+# Registration Client UI refresh (UX4G foundations)
 
-A modern, consistent visual system for the JavaFX registration client, plus the fixes needed to run the
-Java 21 client on macOS (Apple Silicon) for development. Based on `develop` (Java 21, 1.3.0-SNAPSHOT).
+A redesign of the JavaFX registration client on the foundations of **UX4G 3.0**, the Government of
+India design system ([ux4g.gov.in](https://ux4g.gov.in); token values taken from the MIT-licensed
+`ux4g-web-components` package). It also includes the fix needed to run the Java 21 client on macOS
+(Apple Silicon). Based on `develop` (Java 21, 1.3.0-SNAPSHOT).
 
-Screens keep their structure (same sections, same controls, same flows); what changed is the visual
-system and spacing.
+**Contract and upgrade safety:** layouts were rebuilt where needed, but every `fx:id`, `onAction`/handler
+name, controller field type and public method is unchanged. The work is in FXML and CSS plus a few
+isolated UI-construction tweaks, so later MOSIP upgrades merge cleanly. The only nodes removed are two
+decorative separator lines in the app bar and the static, unpopulated "News and Updates" placeholder on
+Home. Nothing in the code referenced either.
 
 ## Design system
 
-Everything is driven from tokens declared on `.root` in
-[`application.css`](../../registration/registration-client/src/main/resources/application.css), so the
-theme can be changed in one place.
+All visual values are tokens on `.root` in
+[`application.css`](../../registration/registration-client/src/main/resources/application.css).
 
-| Area | Before | After |
-| --- | --- | --- |
-| Colour | ~45 hard-coded colours: MOSIP blue plus 3 teals, 4 cyans, pure red/green, black borders | One palette: brand blue `#005BAA`, deep navy chrome, slate neutrals, semantic success/danger/warning |
-| Font | `Roboto` declared 45 times but never shipped, so each OS fell back to its own system font | Roboto Regular/Medium/Bold bundled (`resources/fonts`, Apache-2.0) |
-| Page surface | Mix of white pages and grey pages | One light canvas (`#F2F5F9`) with white cards (10-12px radius, soft shadow) |
-| Buttons | Different sizes per screen; hover inverted to dark blue | Primary (filled) / secondary (outlined) / compact, 40px and 32px heights, soft-tint hover, proper disabled state |
-| Inputs | Underline-only fields, 18px label gap, combo values rendered as solid blue blocks | Outlined 40px inputs and dropdowns, 6px label gap, blue focus, red error state |
-| Tabs | Fixed 250px grey tabs that overflowed the registration flow | Content-width underline tabs; every step is visible |
-| Home | Tiles touching each other, mixed heights, misaligned headings, column divider | 80px tiles with a 12px gap, a single icon column, headings aligned to the cards |
-| Tables | Black row rules, blue header rule | Subtle row dividers, muted header, blank placeholder rows |
-| Dialogs, menus, popups | Grey Modena defaults, heavy shadows | Rounded, soft-elevation surfaces |
-| Startup window | Unstyled Modena window | Branded card on a gradient |
-| Login | Fixed-position card with a large empty gap | Card laid out as a vertical flow (the language picker collapses when unused), 16px rhythm |
+| Foundation | UX4G value used |
+| --- | --- |
+| Font | Noto Sans Regular / Medium / SemiBold / Bold, bundled (`resources/fonts`, SIL OFL 1.1) |
+| Brand | Primary 600 `#4A2BC2`; hover 700 `#3D239F`; pressed 800 `#301C7D`; tint 50 `#F2EFFF` |
+| Chrome | Primary 900 `#24145C` app bar |
+| Neutrals | Text `#171717` / `#404040` / `#737373`; borders `#D9D9D9` / `#E5E5E5`; canvas `#F5F5F5` |
+| Status | Success `#128937`, error `#DB372D`, warning `#D46B08`, info `#08979C`, each with a soft tint |
+| Spacing | 4px grid (8 / 12 / 16 / 24 / 32); 32px page margins, 24px gutters |
+| Radius | 8 for controls, 12 for cards, 999 for chips |
+| Elevation | Soft key + ambient shadows (levels 1-2) |
+| Controls | 40px inputs and buttons; uniform 360px inputs and dropdowns; 96px date parts; fixed-width chips |
 
-## Code changes
+## Screens redesigned
 
-- `application.css`: token layer, component system and per-screen rules. Layout-defining sizes are
-  preserved unless noted below.
-- `fonts/`: bundled Roboto (Apache-2.0 licence included).
-- `RegistrationLogin.fxml`: each login card's controls now sit in a `VBox` flow inside the existing
-  `AnchorPane`s. Same `fx:id`s and handlers; `LoginController` is unchanged.
-- `RegistrationOfficerPacketLayout.fxml` and `PacketHandlerController`: one `homeTile` style, fixed
-  80px tile rows with a 12px gap, a fixed 72px icon column, aligned headings, smaller top band.
-- `TextFieldFxControl` / `DropDownFxControl`: label-to-input spacing 18px to 6px.
-- `BiometricFxControl` / `BiometricsController`: 10px spacing between modality tiles.
-- `ClientPreLoader`: the startup window uses the theme.
+| Screen | What changed |
+| --- | --- |
+| App bar (`Header.fxml`) | One 56px flow: logo, home, and pill chips for operator / centre / machine on the left; status, settings and menu on the right |
+| Home (`RegistrationOfficerPacketLayout.fxml`) | Registration tasks first, as a row of four action cards; operational and end-of-day tasks as two even columns of list cards |
+| Registration flow (`GenericRegistrationLayout.fxml`) | Page title above the steps, the steps in one full-width card with underline tabs, an action bar with the status message and primary action |
+| Form fields (code-built) | Labels above inputs (6px gap); hidden validation and transliteration helpers no longer reserve space; chip groups labelled like other fields; 24/16px gaps |
+| Pending approval | Breadcrumb, title and Approve/Reject header; list and preview as matching cards; action bar with guidance and Authenticate |
+| Login | Card laid out as a vertical flow; the language picker collapses when unused |
+| Everything else | Picks up the tokens: tables, dialogs, menus, settings, biometrics, onboarding, upload, re-registration |
+
+### Code touched (UI construction only)
+
+- `PacketHandlerController`: process cards in a 4-column grid.
+- `GenericController`: form margins and gaps.
+- `ButtonFxControl`: label above the chips.
+- `FxControl.collapseWhenHidden` (new helper), used by `TextFieldFxControl` and `DropDownFxControl`.
+- `DOB*FxControl`: `dobFieldGroup` style hook.
+- `BiometricFxControl` / `BiometricsController`: tile spacing.
+- `ClientPreLoader`: themed startup window.
 
 ## macOS / Apple Silicon fix
 
@@ -80,7 +91,14 @@ from `mosip/mosip-data`. A dev-only harness, kept outside this repo, seeded that
 ## Notes
 
 - **Dashboard** and the **preview/acknowledgement** pages are server-synced HTML templates, so their
-  inner styling (bright tiles, pink borders) comes from the template data, not from client CSS.
+  inner styling (bright tiles, pink borders, serif text) comes from the template data, not from client CSS.
+- **Pre-existing on `develop`, not changed here:** `UpdateUINController` wires a hover listener to
+  `backBtn`, but `UpdateUIN.fxml` has no such element. The NPE is caught and logged, and the screen still
+  works.
+- **Verification:** the full flow was replayed on macOS with offline mock data after every change. That
+  covers login, home, new registration (consent, demographics, documents, scan, biometrics, preview,
+  operator auth, packet created, acknowledgement), approval with supervisor auth, re-registration, upload,
+  dashboard, update UIN, lost UIN, biometric correction, settings and onboarding.
 - `application-pink.css` (the alternate theme) is untouched.
 
 ## Screenshots
@@ -102,7 +120,7 @@ from `mosip/mosip-data`. A dev-only harness, kept outside this repo, seeded that
 | ![](screenshots/25-settings-global-config.png) Global config | ![](screenshots/26-settings-devices.png) Devices |
 | ![](screenshots/27-operator-onboarding.png) Operator onboarding | |
 
-### Before (for reference)
+### Before (original `develop`, for reference)
 
 | | |
 | --- | --- |

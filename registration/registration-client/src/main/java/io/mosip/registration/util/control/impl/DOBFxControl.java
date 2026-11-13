@@ -47,6 +47,7 @@ public class DOBFxControl extends FxControl {
 		this.control = this;
 		VBox appLangDateVBox = create(uiFieldDTO);
 		HBox hBox = new HBox();
+		hBox.getStyleClass().add("dobFieldGroup"); // compact date-part inputs (see application.css)
 		hBox.setSpacing(30);
 		hBox.getChildren().add(appLangDateVBox);
 		HBox.setHgrow(appLangDateVBox, Priority.ALWAYS);

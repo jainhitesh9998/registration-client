@@ -195,8 +195,8 @@ public class TextFieldFxControl extends FxControl {
 				getRegistrationDTo().getSelectedLanguagesByApplicant().forEach(langCode -> {
 					labels.add(this.uiFieldDTO.getLabel().get(langCode));
 					vBox.getChildren().add(createTextBox(langCode,true));
-					vBox.getChildren().add(getLabel(uiFieldDTO.getId() + langCode + RegistrationConstants.MESSAGE, null,
-							RegistrationConstants.DemoGraphicFieldMessageLabel, false, simpleTypeVBox.getPrefWidth()));
+					vBox.getChildren().add(collapseWhenHidden(getLabel(uiFieldDTO.getId() + langCode + RegistrationConstants.MESSAGE, null,
+							RegistrationConstants.DemoGraphicFieldMessageLabel, false, simpleTypeVBox.getPrefWidth())));
 					
 					HBox hyperLinkHBox = new HBox();
 					hyperLinkHBox.setVisible(false);
@@ -217,7 +217,7 @@ public class TextFieldFxControl extends FxControl {
 											.getBundle(langCode, RegistrationConstants.LABELS).getString("reject_word"),
 									RegistrationConstants.DemoGraphicFieldMessageLabel, true));
 
-					vBox.getChildren().add(hyperLinkHBox);
+					vBox.getChildren().add(collapseWhenHidden(hyperLinkHBox));
 				});
 				break;
 			default:
@@ -225,8 +225,8 @@ public class TextFieldFxControl extends FxControl {
 				getRegistrationDTo().getSelectedLanguagesByApplicant().forEach(langcode -> {
 							labels.add(this.uiFieldDTO.getLabel().get(langcode));});
 				vBox.getChildren().add(createTextBox(langCode,false));
-				vBox.getChildren().add(getLabel(uiFieldDTO.getId() + langCode + RegistrationConstants.MESSAGE,
-						null, RegistrationConstants.DemoGraphicFieldMessageLabel, false, simpleTypeVBox.getPrefWidth()));
+				vBox.getChildren().add(collapseWhenHidden(getLabel(uiFieldDTO.getId() + langCode + RegistrationConstants.MESSAGE,
+						null, RegistrationConstants.DemoGraphicFieldMessageLabel, false, simpleTypeVBox.getPrefWidth())));
 				
 				HBox hyperLinkHBox = new HBox();
 				hyperLinkHBox.setVisible(false);
@@ -246,7 +246,7 @@ public class TextFieldFxControl extends FxControl {
 								io.mosip.registration.context.ApplicationContext.getBundle(langCode, RegistrationConstants.LABELS).getString("reject_word"),
 								RegistrationConstants.DemoGraphicFieldMessageLabel, true));
 
-				vBox.getChildren().add(hyperLinkHBox);
+				vBox.getChildren().add(collapseWhenHidden(hyperLinkHBox));
 				break;
 		}
 

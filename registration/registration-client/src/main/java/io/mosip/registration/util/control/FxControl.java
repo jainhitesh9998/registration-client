@@ -253,6 +253,17 @@ public abstract class FxControl  {
 		return label;
 	}
 
+	/**
+	 * Makes a helper node (validation message, transliteration prompt) take layout space only while it is
+	 * visible, so hidden helpers do not leave gaps between form fields.
+	 */
+	protected static <T extends Node> T collapseWhenHidden(T node) {
+		if (!node.managedProperty().isBound()) {
+			node.managedProperty().bind(node.visibleProperty());
+		}
+		return node;
+	}
+
 	protected RegistrationDTO getRegistrationDTo() {
 		RegistrationDTO registrationDTO = null;
 		if (SessionContext.map() != null || !SessionContext.map().isEmpty()) {
