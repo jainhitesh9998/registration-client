@@ -86,8 +86,8 @@
 
             <GridPane fx:id="approveRegistrationRootSubPane" hgap="24.0" styleClass="approveRegistrationRootSubPane, pageBody" GridPane.rowIndex="1">
               <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" percentWidth="44.0" />
-                <ColumnConstraints hgrow="ALWAYS" percentWidth="56.0" />
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="54.0" />
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="46.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints percentHeight="100.0" vgrow="ALWAYS" />
@@ -109,10 +109,10 @@
                         </HBox>
                         <TableView fx:id="table" styleClass="approvalTable" GridPane.rowIndex="1">
                            <columns>
-                              <TableColumn fx:id="slno" editable="false" prefWidth="${tableContainer.width*9/100}" resizable="false" styleClass="tableId" text="%slno" />
-                              <TableColumn fx:id="id" editable="false" prefWidth="${tableContainer.width*41/100}" resizable="false" styleClass="tableId" text="%applicationId" />
-                              <TableColumn fx:id="date" editable="false" prefWidth="${tableContainer.width*28/100}" resizable="false" styleClass="tableId" text="%eodDate" />
-                              <TableColumn fx:id="status" editable="false" prefWidth="${tableContainer.width*19/100}" resizable="false" styleClass="pendingApprovalStatus" text="%status" />
+                              <TableColumn fx:id="slno" editable="false" prefWidth="${tableContainer.width*8/100}" resizable="false" styleClass="tableId" text="%slno" />
+                              <TableColumn fx:id="id" editable="false" prefWidth="${tableContainer.width*40/100}" resizable="false" styleClass="tableId" text="%applicationId" />
+                              <TableColumn fx:id="date" editable="false" prefWidth="${tableContainer.width*26/100}" resizable="false" styleClass="tableId" text="%eodDate" />
+                              <TableColumn fx:id="status" editable="false" prefWidth="${tableContainer.width*22/100}" resizable="false" styleClass="pendingApprovalStatus" text="%status" />
                               <TableColumn fx:id="acknowledgementFormPath" text="%registrtionid" visible="false" />
                            </columns>
                         </TableView>

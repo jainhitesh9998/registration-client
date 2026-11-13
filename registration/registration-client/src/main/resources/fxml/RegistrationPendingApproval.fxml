@@ -77,8 +77,8 @@
 
       <GridPane fx:id="approveRegistrationRootSubPane" hgap="24.0" styleClass="approveRegistrationRootSubPane, pageBody" GridPane.rowIndex="2">
         <columnConstraints>
-          <ColumnConstraints hgrow="ALWAYS" percentWidth="44.0" />
-          <ColumnConstraints hgrow="ALWAYS" percentWidth="56.0" />
+          <ColumnConstraints hgrow="ALWAYS" percentWidth="54.0" />
+          <ColumnConstraints hgrow="ALWAYS" percentWidth="46.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints percentHeight="100.0" vgrow="ALWAYS" />
@@ -110,11 +110,11 @@
                   <TableView fx:id="table" GridPane.rowIndex="1">
                     <columns>
                       <TableColumn fx:id="slno" editable="false" prefWidth="${tableContainer.width*7/100}" resizable="false" styleClass="tableId" text="%slno" />
-                      <TableColumn fx:id="id" editable="false" prefWidth="${tableContainer.width*35/100}" resizable="false" styleClass="tableId" text="%applicationId" />
-                      <TableColumn fx:id="date" editable="false" prefWidth="${tableContainer.width*22/100}" resizable="false" styleClass="tableId" text="%date" />
+                      <TableColumn fx:id="id" editable="false" prefWidth="${tableContainer.width*40/100}" resizable="false" styleClass="tableId" text="%applicationId" />
+                      <TableColumn fx:id="date" editable="false" prefWidth="${tableContainer.width*23/100}" resizable="false" styleClass="tableId" text="%date" />
                       <TableColumn fx:id="acknowledgementFormPath" editable="false" text="%registrtionid" visible="false" />
-                      <TableColumn fx:id="operatorId" editable="false" prefWidth="${tableContainer.width*14/100}" resizable="false" styleClass="tableId" text="%operatorId" />
-                      <TableColumn fx:id="statusComment" editable="false" prefWidth="${tableContainer.width*17/100}" resizable="false" styleClass="pendingApprovalStatus" text="%approvalDecision" />
+                      <TableColumn fx:id="operatorId" editable="false" prefWidth="${tableContainer.width*13/100}" resizable="false" styleClass="tableId" text="%operatorId" />
+                      <TableColumn fx:id="statusComment" editable="false" prefWidth="${tableContainer.width*13/100}" resizable="false" styleClass="pendingApprovalStatus" text="%approvalDecision" />
                     </columns>
                   </TableView>
                </children>
@@ -128,35 +128,41 @@
                 <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
               </rowConstraints>
                <children>
-                  <HBox alignment="CENTER_LEFT" styleClass="reviewHeader">
+                  <!-- two rows so nothing truncates in a narrow card: id + decision, then date/operator + actions -->
+                  <VBox styleClass="reviewHeader">
                      <children>
-                        <VBox alignment="CENTER_LEFT" styleClass="reviewHeaderTitles" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" styleClass="reviewHeaderRow">
                            <children>
-                              <Label fx:id="reviewTitle" styleClass="reviewTitle" />
-                              <Label fx:id="reviewMeta" styleClass="reviewMeta" />
+                              <Label fx:id="reviewTitle" minWidth="-Infinity" styleClass="reviewTitle" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="reviewDecision" managed="${reviewDecision.visible}" minWidth="-Infinity" styleClass="decisionPill" visible="false" />
                            </children>
-                        </VBox>
-                        <Label fx:id="reviewDecision" managed="${reviewDecision.visible}" styleClass="decisionPill" visible="false" />
-                        <ToggleButton fx:id="rejectionBtn" mnemonicParsing="false" onAction="#updateStatus" styleClass="rejectButton" text="%reject">
-                           <graphic>
-                              <ImageView fx:id="rejectionImageView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/Reject.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </ToggleButton>
-                        <ToggleButton fx:id="approvalBtn" mnemonicParsing="false" onAction="#updateStatus" styleClass="approveButton" text="%approve">
-                           <graphic>
-                              <ImageView fx:id="approvalImageView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/Approve.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </ToggleButton>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" styleClass="reviewHeaderRow">
+                           <children>
+                              <Label fx:id="reviewMeta" maxWidth="Infinity" styleClass="reviewMeta" HBox.hgrow="ALWAYS" />
+                              <ToggleButton fx:id="rejectionBtn" mnemonicParsing="false" onAction="#updateStatus" styleClass="rejectButton" text="%reject">
+                                 <graphic>
+                                    <ImageView fx:id="rejectionImageView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/Reject.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </ToggleButton>
+                              <ToggleButton fx:id="approvalBtn" mnemonicParsing="false" onAction="#updateStatus" styleClass="approveButton" text="%approve">
+                                 <graphic>
+                                    <ImageView fx:id="approvalImageView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/Approve.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </ToggleButton>
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
+                  </VBox>
                   <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" GridPane.rowIndex="1" />
                </children>
             </GridPane>

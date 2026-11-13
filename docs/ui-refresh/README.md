@@ -71,6 +71,7 @@ derived from the core MOSIP sample data (`mosip/mosip-data`).
 | Biometric exceptions | Two fingers marked (exception photo required, reviewer authentication by a second supervisor); marked then unmarked (no photo, no reviewer); all fingers and irises marked (scan disabled for those modalities, face + photo) |
 | Biometric login | Fingerprint (left / right slab, thumbs), iris, face, fingerprint + iris + face, face + password; wrong person; no device; modality not enrolled |
 | End of day | Approve, reject with reason, supervisor authentication, decisions persisted |
+| Window sizes | Full standard flow at 1280×680 and 1366×728 (1280×720 / 1366×768 screens minus the Windows taskbar), 1536×824 (1920×1080 at 125% scaling) and 1728×975; every screen fits, long screens scroll |
 
 Biometric devices and the matcher were exercised with a dev-only SBI stand-in (outside this repo) and
 MOSIP's mock SDK; everything above the device layer is the real client.

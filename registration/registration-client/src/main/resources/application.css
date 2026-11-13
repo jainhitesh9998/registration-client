@@ -4552,8 +4552,8 @@ Working on new Css by taleev
 }
 
 .reviewHeader {
-	-fx-spacing: 12;
-	-fx-padding: 16 20 16 20;
+	-fx-spacing: 8;
+	-fx-padding: 14 20 14 20;
 	-fx-border-color: transparent transparent -mx-border-subtle transparent;
 	-fx-border-width: 0 0 1 0;
 }
@@ -4884,4 +4884,13 @@ Working on new Css by taleev
 .fieldSecondaryLabels > .fieldSecondaryLabel {
 	-fx-font-size: 12px;
 	-fx-text-fill: -mx-text-muted;
+}
+
+/* list tables (approval, upload, re-registration): 14px cells so full application ids fit at 1280px */
+.contentCard .table-view .table-cell {
+	-fx-font-size: 14px;
+}
+
+.reviewHeaderRow {
+	-fx-spacing: 12;
 }
