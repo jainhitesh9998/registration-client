@@ -14,30 +14,60 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<!-- Login (LoginController). Split layout: brand panel (illustration + product name) on the left, sign-in panel
-     with the form centred on the right. Same fx:ids / handlers / node types as before. -->
+<!-- Login (LoginController). Split layout: brand panel (logo, product name and tagline, registration centre and
+     machine) and the sign-in panel with the form centred. Same fx:ids / handlers / node types as before. -->
 <BorderPane id="loginScreen" prefHeight="553.0" prefWidth="523.0" styleClass="loginBorderPaneStyle" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="io.mosip.registration.controller.auth.LoginController">
   <center>
     <HBox styleClass="loginLayout">
       <children>
-        <StackPane maxWidth="Infinity" prefWidth="0.0" styleClass="loginHero" HBox.hgrow="ALWAYS">
+        <StackPane maxWidth="Infinity" minWidth="480.0" prefWidth="480.0" styleClass="loginHero" HBox.hgrow="ALWAYS">
           <children>
             <Region styleClass="loginHeroArt" />
             <Region styleClass="loginHeroScrim" />
-            <VBox alignment="BOTTOM_LEFT" styleClass="loginHeroContent">
+            <VBox styleClass="loginHeroContent">
               <children>
-                <ImageView fx:id="mosipLogoImageView" fitHeight="56.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                    <Image url="@../images/logo-final.png" />
-                  </image>
-                </ImageView>
-                <Label styleClass="loginHeroTitle" text="%regclient" wrapText="true" />
-                <Region styleClass="loginHeroRule" />
+                <HBox alignment="CENTER_LEFT" styleClass="loginHeroBrand">
+                  <children>
+                    <StackPane styleClass="loginHeroLogo">
+                      <children>
+                        <ImageView fx:id="mosipLogoImageView" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                          <image>
+                            <Image url="@../images/logo-final.png" />
+                          </image>
+                        </ImageView>
+                      </children>
+                    </StackPane>
+                  </children>
+                </HBox>
+                <Region VBox.vgrow="ALWAYS" />
+                <VBox styleClass="loginHeroText">
+                  <children>
+                    <Label styleClass="loginHeroTitle" text="%regclient" wrapText="true" />
+                    <Label styleClass="loginHeroTagline" text="%loginTagline" wrapText="true" />
+                  </children>
+                </VBox>
+                <Region VBox.vgrow="ALWAYS" />
+                <HBox fx:id="loginFacts" managed="${loginFacts.visible}" styleClass="loginHeroFacts">
+                  <children>
+                    <VBox fx:id="loginCentreFact" managed="${loginCentreFact.visible}" styleClass="loginHeroFact" HBox.hgrow="ALWAYS">
+                      <children>
+                        <Label styleClass="loginHeroFactLabel" text="%loginCentreLabel" />
+                        <Label fx:id="loginCentreValue" styleClass="loginHeroFactValue" wrapText="true" />
+                      </children>
+                    </VBox>
+                    <VBox fx:id="loginMachineFact" managed="${loginMachineFact.visible}" styleClass="loginHeroFact" HBox.hgrow="ALWAYS">
+                      <children>
+                        <Label styleClass="loginHeroFactLabel" text="%loginMachineLabel" />
+                        <Label fx:id="loginMachineValue" styleClass="loginHeroFactValue" wrapText="true" />
+                      </children>
+                    </VBox>
+                  </children>
+                </HBox>
               </children>
             </VBox>
           </children>
         </StackPane>
-        <StackPane minWidth="560.0" prefWidth="560.0" styleClass="loginFormPanel">
+        <StackPane maxWidth="Infinity" minWidth="480.0" prefWidth="480.0" styleClass="loginFormPanel" HBox.hgrow="ALWAYS">
           <children>
     <AnchorPane fx:id="contentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
       <children>
@@ -47,9 +77,19 @@
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
-                <Label styleClass="higlightedLoginLable" text="%registrationlogin" />
+                <VBox styleClass="loginHeading">
+                  <children>
+                    <Label styleClass="higlightedLoginLable" text="%registrationlogin" />
+                    <Label styleClass="loginSubtitle" text="%loginSubtitle" wrapText="true" />
+                  </children>
+                </VBox>
                 <ComboBox fx:id="appLanguage" maxWidth="Infinity" promptText="%chooselanguage" styleClass="loginCombobox" />
-                <TextField fx:id="userId" onAction="#validateUserId" promptText="%withusername" styleClass="loginTextStyle" />
+                <VBox styleClass="loginField">
+                  <children>
+                    <Label styleClass="loginFieldLabel" text="%username" />
+                    <TextField fx:id="userId" onAction="#validateUserId" promptText="%withusername" styleClass="loginTextStyle" />
+                  </children>
+                </VBox>
                 <Button fx:id="sub1" maxWidth="Infinity" mnemonicParsing="false" onAction="#validateUserId" styleClass="loginSubmitStyle" text="%submit" />
                 <Hyperlink fx:id="forgotUsrnme" managed="${forgotUsrnme.visible}" mnemonicParsing="false" onAction="#forgotUsrname" styleClass="hyperLinkStyle" text="%forgotUsername" visible="false" />
               </children>
@@ -61,8 +101,18 @@
           <children>
             <VBox styleClass="loginCardBody" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
-                <Label styleClass="higlightedLoginLable" text="%registrationlogin" />
-                <PasswordField fx:id="password" onAction="#validateCredentials" promptText="%withpword" styleClass="loginTextStyle" />
+                <VBox styleClass="loginHeading">
+                  <children>
+                    <Label styleClass="higlightedLoginLable" text="%registrationlogin" />
+                    <Label styleClass="loginSubtitle" text="%loginSubtitle" wrapText="true" />
+                  </children>
+                </VBox>
+                <VBox styleClass="loginField">
+                  <children>
+                    <Label styleClass="loginFieldLabel" text="%password" />
+                    <PasswordField fx:id="password" onAction="#validateCredentials" promptText="%withpword" styleClass="loginTextStyle" />
+                  </children>
+                </VBox>
                 <Button fx:id="sub2" maxWidth="Infinity" mnemonicParsing="false" onAction="#validateCredentials" styleClass="loginSubmitStyle" text="%submit" />
                 <HBox alignment="CENTER_LEFT" styleClass="loginLinkRow">
                   <children>

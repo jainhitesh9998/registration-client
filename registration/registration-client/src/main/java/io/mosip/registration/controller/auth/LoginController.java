@@ -50,6 +50,8 @@ import io.mosip.registration.exception.RegBaseUncheckedException;
 import io.mosip.registration.scheduler.SchedulerUtil;
 import io.mosip.registration.service.bio.BioService;
 import io.mosip.registration.service.login.LoginService;
+import io.mosip.registration.dto.RegistrationCenterDetailDTO;
+import io.mosip.registration.util.healthcheck.RegistrationSystemPropertiesChecker;
 import io.mosip.registration.service.operator.UserMachineMappingService;
 import io.mosip.registration.update.SoftwareUpdateHandler;
 import io.mosip.registration.util.common.OTPManager;
@@ -175,6 +177,22 @@ public class LoginController extends BaseController implements Initializable {
 	@FXML
 	private ImageView mosipLogoImageView;
 
+	/* Brand panel facts: the registration centre and machine this client is set up for. Optional nodes. */
+	@FXML
+	private Pane loginFacts;
+
+	@FXML
+	private Pane loginCentreFact;
+
+	@FXML
+	private Label loginCentreValue;
+
+	@FXML
+	private Pane loginMachineFact;
+
+	@FXML
+	private Label loginMachineValue;
+
 	@FXML
 	private ImageView fingerprintImageView;
 
@@ -230,7 +248,8 @@ public class LoginController extends BaseController implements Initializable {
 		setImage(fingerprintImageView	, RegistrationConstants.FINGERPRINT_SCAN_IMG);
 		setImage(faceImage	, RegistrationConstants.FACE_SCAN_IMG);
 		setImage(irisImageView	, RegistrationConstants.EYE_SCAN_IMG);
-		
+		showMachineFacts();
+
 
 		new Thread(() -> {
 
@@ -302,6 +321,45 @@ public class LoginController extends BaseController implements Initializable {
 		} catch (RuntimeException runtimeException) {
 			LOGGER.error(runtimeException.getMessage(), runtimeException);
 		}
+	}
+
+	/**
+	 * Shows the registration centre (name and id) and the machine name on the brand panel. Before the machine is
+	 * mapped to a centre (initial set-up) only the machine is shown; when nothing is known the facts are hidden.
+	 */
+	private void showMachineFacts() {
+		if (loginFacts == null) {
+			return;
+		}
+		String centre = null;
+		String machine = null;
+		try {
+			machine = RegistrationSystemPropertiesChecker.getMachineId();
+			String centerId = baseService.getCenterId();
+			if (centerId != null) {
+				RegistrationCenterDetailDTO centerDetail = loginService.getRegistrationCenterDetails(centerId,
+						ApplicationContext.applicationLanguage());
+				String centerName = centerDetail == null ? null : centerDetail.getRegistrationCenterName();
+				centre = centerName == null || centerName.isBlank() ? centerId : centerName + " (" + centerId + ")";
+			}
+		} catch (RuntimeException exception) {
+			LOGGER.error("Unable to read the registration centre and machine for the login screen", exception);
+		}
+		boolean hasCentre = centre != null;
+		boolean hasMachine = machine != null && !machine.isBlank();
+		if (loginCentreValue != null) {
+			loginCentreValue.setText(hasCentre ? centre : RegistrationConstants.EMPTY);
+		}
+		if (loginMachineValue != null) {
+			loginMachineValue.setText(hasMachine ? machine : RegistrationConstants.EMPTY);
+		}
+		if (loginCentreFact != null) {
+			loginCentreFact.setVisible(hasCentre);
+		}
+		if (loginMachineFact != null) {
+			loginMachineFact.setVisible(hasMachine);
+		}
+		loginFacts.setVisible(hasCentre || hasMachine);
 	}
 
 	/**

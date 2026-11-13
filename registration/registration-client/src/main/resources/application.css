@@ -3731,23 +3731,55 @@ Working on new Css by taleev
 }
 
 .loginHeroContent {
-	-fx-padding: 64;
-	-fx-spacing: 20;
+	-fx-padding: 56 64 56 64;
+	-fx-spacing: 0;
+}
+
+.loginHeroLogo {
+	-fx-background-color: #FFFFFF;
+	-fx-background-radius: 12;
+	-fx-padding: 6;
+}
+
+.loginHeroText {
+	-fx-spacing: 16;
+	-fx-max-width: 560px;
 }
 
 .loginHeroTitle {
 	-fx-text-fill: #FFFFFF;
 	-fx-font-family: 'Noto Sans SemiBold';
-	-fx-font-size: 40px;
+	-fx-font-size: 44px;
 }
 
-.loginHeroRule {
-	-fx-min-width: 64px;
-	-fx-max-width: 64px;
-	-fx-min-height: 4px;
-	-fx-max-height: 4px;
-	-fx-background-color: #A391FF;
-	-fx-background-radius: 2;
+.loginHeroTagline {
+	-fx-text-fill: #DCD4FF;
+	-fx-font-size: 17px;
+	-fx-line-spacing: 4;
+}
+
+.loginHeroFacts {
+	-fx-spacing: 16;
+	-fx-max-width: 560px;
+	-fx-padding: 24 0 0 0;
+	-fx-border-color: rgba(255, 255, 255, 0.16) transparent transparent transparent;
+	-fx-border-width: 1 0 0 0;
+}
+
+.loginHeroFact {
+	-fx-spacing: 4;
+	-fx-pref-width: 0;
+}
+
+.loginHeroFactLabel {
+	-fx-text-fill: #C0B3FF;
+	-fx-font-size: 12px;
+}
+
+.loginHeroFactValue {
+	-fx-text-fill: #FFFFFF;
+	-fx-font-family: 'Noto Sans Medium';
+	-fx-font-size: 15px;
 }
 
 .loginFormPanel {
@@ -4609,4 +4641,72 @@ Working on new Css by taleev
 .contentCard .table-view>.virtual-flow>.clipped-container>.sheet>.table-row-cell:filled:selected>.table-cell {
 	-fx-background-color: -mx-primary-soft;
 	-fx-text-fill: -mx-text;
+}
+
+/* login form: heading with subtitle, labelled 48px fields */
+.loginHeading {
+	-fx-spacing: 6;
+}
+
+.loginHeading .higlightedLoginLable {
+	-fx-padding: 0;
+}
+
+.loginSubtitle {
+	-fx-text-fill: #5C5C66;
+	-fx-font-size: 15px;
+}
+
+.loginField {
+	-fx-spacing: 6;
+}
+
+.loginFieldLabel {
+	-fx-text-fill: -mx-text-secondary;
+	-fx-font-family: 'Noto Sans Medium';
+	-fx-font-size: 14px;
+}
+
+.loginFormPanel .loginTextStyle,
+.loginFormPanel .loginCombobox {
+	-fx-pref-height: 48px;
+	-fx-min-height: 48px;
+	-fx-font-size: 16px;
+	-fx-padding: 0 14 0 14;
+}
+
+.loginFormPanel .loginSubmitStyle,
+.loginFormPanel .loginSecondaryStyle {
+	-fx-pref-height: 48px;
+	-fx-min-height: 48px;
+	-fx-font-size: 16px;
+}
+
+/* --- Update UIN (first step) ------------------------------------------------ */
+.uinUpdateCard {
+	-fx-padding: 24;
+	-fx-spacing: 20;
+}
+
+.uinUpdateField {
+	-fx-spacing: 6;
+}
+
+.uinUpdateTextFiledStyle {
+	-fx-pref-height: 44px;
+	-fx-min-height: 44px;
+	-fx-padding: 0 12 0 12;
+}
+
+.uinUpdateSectionLabel {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 15px;
+	-fx-text-fill: -mx-text;
+}
+
+.uinUpdateCard .uinupdate-scroll-pane,
+.uinUpdateCard .uinupdate-scroll-pane > .viewport {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-padding: 0;
 }

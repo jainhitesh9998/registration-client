@@ -7,6 +7,7 @@ import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -29,6 +30,7 @@ import io.mosip.registration.dto.schema.ProcessSpecDto;
 import io.mosip.registration.dto.schema.UiFieldDTO;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -39,11 +41,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
 
 /**
  * UpdateUINController Class.
@@ -68,6 +68,13 @@ public class UpdateUINController extends BaseController implements Initializable
 	private ImageView backImageView;
 	@FXML
 	private ImageView continueImageView;
+
+	/* Page header: breadcrumb trail and title, filled from the process spec label. Optional nodes. */
+	@FXML
+	private Label pageTitle;
+
+	@FXML
+	private Label breadcrumbCurrent;
 
 	@Autowired
 	private UinValidator<String> uinValidatorImpl;
@@ -111,9 +118,11 @@ public class UpdateUINController extends BaseController implements Initializable
 		fxUtils = FXUtils.getInstance();
 		checkBoxKeeper = new HashMap<>();
 
-		groupedMap = new HashMap<>();
+		// insertion ordered: the options follow the order of the groups in the process spec (screen, then field order)
+		groupedMap = new LinkedHashMap<>();
 		groupLabels = new HashMap<>();
 		ProcessSpecDto processSpecDto = getProcessSpec(getRegistrationDTOFromSession().getProcessId(), getRegistrationDTOFromSession().getIdSchemaVersion());
+		setPageTitle(processSpecDto);
 		processSpecDto.getScreens().forEach(screen -> {
 			screen.getFields().forEach(field -> {
 				if(field.getGroup() != null) {
@@ -126,8 +135,6 @@ public class UpdateUINController extends BaseController implements Initializable
 				}
 			});
 		});
-		
-		scrollPane.prefWidthProperty().bind(demographicHBox.widthProperty());
 		
 		parentFlow = parentFlowPane.getChildren();
 		groupedMap.forEach((groupName, list) -> {
@@ -161,31 +168,41 @@ public class UpdateUINController extends BaseController implements Initializable
 		fxUtils.listenOnSelectedCheckBox(checkBox);
 		checkBoxKeeper.put(groupName, checkBox);
 		
+		// the option card is the CheckBox itself (fixed size in CSS), so the FlowPane wraps them into even columns
 		GridPane gridPane = new GridPane();
-		gridPane.setPrefWidth(400);
-		gridPane.setPrefHeight(40);
-
-		ObservableList<ColumnConstraints> columnConstraints = gridPane.getColumnConstraints();
-		ColumnConstraints columnConstraint1 = new ColumnConstraints();
-		columnConstraint1.setPercentWidth(10);
-		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setPercentWidth(85);
-		ColumnConstraints columnConstraint3 = new ColumnConstraints();
-		columnConstraint3.setPercentWidth(5);
-		columnConstraints.addAll(columnConstraint1, columnConstraint2, columnConstraint3);
-
-		ObservableList<RowConstraints> rowConstraints = gridPane.getRowConstraints();
-		RowConstraints rowConstraint1 = new RowConstraints();
-		columnConstraint1.setPercentWidth(20);
-		RowConstraints rowConstraint2 = new RowConstraints();
-		columnConstraint1.setPercentWidth(60);
-		RowConstraints rowConstraint3 = new RowConstraints();
-		columnConstraint1.setPercentWidth(20);
-		rowConstraints.addAll(rowConstraint1, rowConstraint2, rowConstraint3);
-
-		gridPane.add(checkBox, 1, 1);
+		gridPane.add(checkBox, 0, 0);
 
 		return gridPane;
+	}
+
+	/**
+	 * Title and breadcrumb from the process label in the application language (falls back to the static label).
+	 */
+	private void setPageTitle(ProcessSpecDto processSpecDto) {
+		if (pageTitle == null || processSpecDto == null || processSpecDto.getLabel() == null) {
+			return;
+		}
+		String title = processSpecDto.getLabel().get(io.mosip.registration.context.ApplicationContext.applicationLanguage());
+		if (title == null || title.isBlank()) {
+			title = processSpecDto.getLabel().values().stream().filter(value -> value != null && !value.isBlank())
+					.findFirst().orElse(null);
+		}
+		if (title != null) {
+			pageTitle.setText(title);
+			if (breadcrumbCurrent != null) {
+				breadcrumbCurrent.setText("/ " + title);
+			}
+		}
+	}
+
+	/**
+	 * Breadcrumb "Home": back to the home page (asks for confirmation like every other way out of a flow).
+	 *
+	 * @param event the event
+	 */
+	@FXML
+	public void goToHome(ActionEvent event) {
+		goToHomePageFromRegistration();
 	}
 
 	private String getLabelsForGroup(String groupName, Map<String, String> labels) {
