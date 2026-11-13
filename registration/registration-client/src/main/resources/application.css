@@ -4482,3 +4482,131 @@ Working on new Css by taleev
 #fetchBtn {
 	-fx-min-width: 140px;
 }
+
+/* --- Pending approval: decision counts, review card header, footer summary --- */
+.approvalStats {
+	-fx-spacing: 24;
+}
+
+.approvalStat {
+	-fx-spacing: 6;
+}
+
+.approvalStatValue {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 22px;
+	-fx-text-fill: -mx-text;
+}
+
+.approvalStatApproved .approvalStatValue {
+	-fx-text-fill: -mx-success;
+}
+
+.approvalStatRejected .approvalStatValue {
+	-fx-text-fill: -mx-danger;
+}
+
+.approvalStatLabel {
+	-fx-font-size: 13px;
+	-fx-text-fill: -mx-text-muted;
+}
+
+.reviewCard {
+	-fx-padding: 0;
+}
+
+.reviewHeader {
+	-fx-spacing: 12;
+	-fx-padding: 16 20 16 20;
+	-fx-border-color: transparent transparent -mx-border-subtle transparent;
+	-fx-border-width: 0 0 1 0;
+}
+
+.reviewHeaderTitles {
+	-fx-spacing: 2;
+}
+
+.reviewTitle {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 17px;
+	-fx-text-fill: -mx-text;
+}
+
+.reviewMeta {
+	-fx-font-size: 13px;
+	-fx-text-fill: -mx-text-muted;
+}
+
+.decisionPill {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 12px;
+	-fx-background-radius: 999;
+	-fx-padding: 3 10 3 10;
+}
+
+.decisionPill.decisionPending {
+	-fx-text-fill: -mx-text-secondary;
+	-fx-background-color: -mx-surface-muted;
+}
+
+.decisionPill.decisionApproved {
+	-fx-text-fill: -mx-success;
+	-fx-background-color: -mx-success-soft;
+}
+
+.decisionPill.decisionRejected {
+	-fx-text-fill: -mx-danger;
+	-fx-background-color: -mx-danger-soft;
+}
+
+.reviewCard .web-view {
+	-fx-padding: 0 4 4 4;
+}
+
+.pageActionBarText {
+	-fx-spacing: 2;
+}
+
+.pageActionBarSummary {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 14px;
+	-fx-text-fill: -mx-text;
+}
+
+/* Approve / reject / authenticate are ToggleButtons that stay selected after a click; the decision is shown by the
+   pill and the table, so the selected state keeps the normal button look instead of the generic toggle shading. */
+.approveButton:selected {
+	-fx-background-color: -mx-primary;
+	-fx-background-insets: 0;
+	-fx-border-color: -mx-primary;
+	-fx-text-fill: -mx-on-primary;
+}
+
+.approveButton:selected:hover {
+	-fx-background-color: -mx-primary-hover;
+	-fx-border-color: -mx-primary-hover;
+}
+
+.rejectButton:selected {
+	-fx-background-color: -mx-surface;
+	-fx-background-insets: 0;
+	-fx-border-color: -mx-primary;
+	-fx-text-fill: -mx-primary;
+}
+
+.rejectButton:selected:hover {
+	-fx-background-color: -mx-primary-soft;
+}
+
+.approveButton:selected:disabled,
+.rejectButton:selected:disabled {
+	-fx-background-color: -mx-surface-sunken;
+	-fx-border-color: -mx-border;
+	-fx-text-fill: -mx-text-placeholder;
+}
+
+/* list/review screens: keep the selected row visible while focus is in the review pane or a popup */
+.contentCard .table-view>.virtual-flow>.clipped-container>.sheet>.table-row-cell:filled:selected>.table-cell {
+	-fx-background-color: -mx-primary-soft;
+	-fx-text-fill: -mx-text;
+}

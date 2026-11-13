@@ -855,7 +855,7 @@ public class PacketHandlerController extends BaseController implements Initializ
 		try {
 			if (homeGreeting != null) {
 				String name = SessionContext.userContext().getName();
-				homeGreeting.setText(MessageFormat.format(getLabel(HOME_WELCOME_KEY, "{0}"), name == null ? "" : name));
+				homeGreeting.setText(MessageFormat.format(getLabelOrDefault(HOME_WELCOME_KEY, "{0}"), name == null ? "" : name));
 			}
 			if (homeContext != null) {
 				StringBuilder context = new StringBuilder();
@@ -894,18 +894,6 @@ public class PacketHandlerController extends BaseController implements Initializ
 	}
 
 	/** Label from the application-language bundle, or {@code fallback} when the key is not defined. */
-	private String getLabel(String key, String fallback) {
-		try {
-			ResourceBundle labels = ApplicationContext.getBundle(ApplicationContext.applicationLanguage(),
-					RegistrationConstants.LABELS);
-			if (labels != null && labels.containsKey(key)) {
-				return labels.getString(key);
-			}
-		} catch (RuntimeException exception) {
-			LOGGER.debug("Label {} not available", key);
-		}
-		return fallback;
-	}
 	private static final int HOME_PROCESS_COLUMNS = 4;
 
 	private void addParentRowConstraints(int size) {
@@ -972,7 +960,7 @@ public class PacketHandlerController extends BaseController implements Initializ
 		label.setMinHeight(Region.USE_PREF_SIZE);
 		gridPane.add(label, 0, 1);
 
-		String description = getLabel(PROCESS_DESCRIPTION_KEY_PREFIX + processSpecDto.getFlow(), null);
+		String description = getLabelOrDefault(PROCESS_DESCRIPTION_KEY_PREFIX + processSpecDto.getFlow(), null);
 		if (description != null && !description.isBlank()) {
 			Label descriptionLabel = new Label(description);
 			descriptionLabel.setWrapText(true);

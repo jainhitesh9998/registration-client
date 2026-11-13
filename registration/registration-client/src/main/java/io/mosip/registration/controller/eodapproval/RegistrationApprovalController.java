@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 import java.util.stream.Collectors;
@@ -157,6 +158,33 @@ public class RegistrationApprovalController extends BaseController implements In
 	@FXML
 	private GridPane imageAnchorPane;
 
+	/* Decision counts in the page header, the selected application in the review card and the footer summary.
+	 * Optional: older layouts without these nodes keep working. */
+	@FXML
+	private Label pendingCountLbl;
+
+	@FXML
+	private Label approvedCountLbl;
+
+	@FXML
+	private Label rejectedCountLbl;
+
+	@FXML
+	private Label reviewTitle;
+
+	@FXML
+	private Label reviewMeta;
+
+	@FXML
+	private Label reviewDecision;
+
+	@FXML
+	private Label decisionSummaryLbl;
+
+	private static final String DECISION_APPROVED_CLASS = "decisionApproved";
+	private static final String DECISION_REJECTED_CLASS = "decisionRejected";
+	private static final String DECISION_PENDING_CLASS = "decisionPending";
+
 	/** The map list. */
 	private List<Map<String, String>> approvalmapList = null;
 
@@ -229,6 +257,10 @@ public class RegistrationApprovalController extends BaseController implements In
 		statusComment.setResizable(false);
 		operatorId.setResizable(false);
 		disableColumnsReorder(table);
+		table.getSelectionModel().selectedItemProperty()
+				.addListener((observable, oldItem, newItem) -> refreshReviewHeader(newItem));
+		refreshDecisionSummary();
+		refreshReviewHeader(table.getSelectionModel().getSelectedItem());
 		table.getColumns().forEach(column -> column.setReorderable(false));
 	}
 
@@ -326,6 +358,102 @@ public class RegistrationApprovalController extends BaseController implements In
 	/**
 	 * Viewing RegistrationAcknowledgement on selecting the Registration record.
 	 */
+	/**
+	 * Decision recorded in this session for the packet: approved / rejected status code, or null while pending.
+	 */
+	private String getDecision(String packetId) {
+		if (approvalmapList == null || packetId == null) {
+			return null;
+		}
+		for (Map<String, String> decision : approvalmapList) {
+			if (packetId.equals(decision.get(RegistrationConstants.PACKET_ID))) {
+				return decision.get(RegistrationConstants.STATUSCODE);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Recomputes the pending / approved / rejected counts and the footer summary from the decisions recorded so far.
+	 * The decision list is the one submitted on authentication, so the counts always match what will be saved.
+	 */
+	private void refreshDecisionSummary() {
+		try {
+			int total = observableList == null ? 0 : observableList.size();
+			int approved = 0;
+			int rejected = 0;
+			if (observableList != null) {
+				for (RegistrationApprovalVO application : observableList) {
+					String decision = getDecision(application.getPacketId());
+					if (RegistrationClientStatusCode.APPROVED.getCode().equals(decision)) {
+						approved++;
+					} else if (RegistrationClientStatusCode.REJECTED.getCode().equals(decision)) {
+						rejected++;
+					}
+				}
+			}
+			if (pendingCountLbl != null) {
+				pendingCountLbl.setText(String.valueOf(total - approved - rejected));
+			}
+			if (approvedCountLbl != null) {
+				approvedCountLbl.setText(String.valueOf(approved));
+			}
+			if (rejectedCountLbl != null) {
+				rejectedCountLbl.setText(String.valueOf(rejected));
+			}
+			if (decisionSummaryLbl != null) {
+				decisionSummaryLbl.setText(total == 0 ? RegistrationConstants.EMPTY
+						: MessageFormat.format(getLabelOrDefault("approvalDecidedSummary", "{0} / {1}"),
+								approved + rejected, total));
+				decisionSummaryLbl.setVisible(total > 0);
+				decisionSummaryLbl.setManaged(total > 0);
+			}
+		} catch (RuntimeException exception) {
+			LOGGER.error(LOG_REG_PENDING_APPROVAL, APPLICATION_NAME, APPLICATION_ID,
+					"Unable to refresh decision summary " + ExceptionUtils.getStackTrace(exception));
+		}
+	}
+
+	/**
+	 * Shows the selected application's id, date, operator and current decision in the review card header.
+	 */
+	private void refreshReviewHeader(RegistrationApprovalVO application) {
+		if (reviewTitle == null) {
+			return;
+		}
+		if (application == null) {
+			reviewTitle.setText(RegistrationConstants.EMPTY);
+			if (reviewMeta != null) {
+				reviewMeta.setText(RegistrationConstants.EMPTY);
+			}
+			if (reviewDecision != null) {
+				reviewDecision.setVisible(false);
+			}
+			return;
+		}
+		reviewTitle.setText(application.getId());
+		if (reviewMeta != null) {
+			reviewMeta.setText(String.join(" \u00B7 ", application.getDate(),
+					getLabelOrDefault("operatorId", "Operator ID") + " " + application.getOperatorId()));
+		}
+		if (reviewDecision != null) {
+			String decision = getDecision(application.getPacketId());
+			reviewDecision.getStyleClass().removeAll(DECISION_APPROVED_CLASS, DECISION_REJECTED_CLASS,
+					DECISION_PENDING_CLASS);
+			if (RegistrationClientStatusCode.APPROVED.getCode().equals(decision)) {
+				reviewDecision.setText(getLabelOrDefault("approvalApproved", "Approved"));
+				reviewDecision.getStyleClass().add(DECISION_APPROVED_CLASS);
+			} else if (RegistrationClientStatusCode.REJECTED.getCode().equals(decision)) {
+				reviewDecision.setText(getLabelOrDefault("approvalRejected", "Rejected"));
+				reviewDecision.getStyleClass().add(DECISION_REJECTED_CLASS);
+			} else {
+				reviewDecision.setText(getLabelOrDefault("approvalPending", "Pending"));
+				reviewDecision.getStyleClass().add(DECISION_PENDING_CLASS);
+			}
+			reviewDecision.setVisible(true);
+		}
+	}
+
 	private void viewAck() {
 		LOGGER.info(LOG_REG_PENDING_APPROVAL, APPLICATION_NAME, APPLICATION_ID,
 				"Displaying the Acknowledgement form started");
@@ -414,6 +542,7 @@ public class RegistrationApprovalController extends BaseController implements In
 		// 4. Bind the SortedList comparator to the TableView comparator.
 		sortedList.comparatorProperty().bind(table.comparatorProperty());
 		table.setItems(sortedList);
+		refreshDecisionSummary();
 	}
 
 	private void filterData(String newValue, FilteredList<RegistrationApprovalVO> filteredData) {

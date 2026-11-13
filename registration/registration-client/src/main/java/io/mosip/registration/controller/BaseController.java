@@ -866,6 +866,26 @@ public class BaseController {
 	 *
 	 * @return the registration DTO from session
 	 */
+	/**
+	 * Label from the application-language bundle, or {@code fallback} when the key is not configured.
+	 *
+	 * @param key      label key
+	 * @param fallback value used when the bundle has no such key
+	 * @return the label text
+	 */
+	protected String getLabelOrDefault(String key, String fallback) {
+		try {
+			ResourceBundle labels = ApplicationContext.getBundle(ApplicationContext.applicationLanguage(),
+					RegistrationConstants.LABELS);
+			if (labels != null && labels.containsKey(key)) {
+				return labels.getString(key);
+			}
+		} catch (RuntimeException exception) {
+			LOGGER.debug("Label {} not available", key);
+		}
+		return fallback;
+	}
+
 	public RegistrationDTO getRegistrationDTOFromSession() {
 		RegistrationDTO registrationDTO = null;
 		if (SessionContext.map() != null && !SessionContext.map().isEmpty()) {

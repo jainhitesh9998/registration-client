@@ -827,12 +827,7 @@ public class GenericController extends BaseController {
 		Label progressLabel = (Label) stepRail.getChildren().get(2);
 		int position = Math.max(selected, 0) + 1;
 		progress.setProgress(count <= 1 ? 1.0 : (double) (position - 1) / (count - 1));
-		String pattern = ApplicationContext.getBundle(ApplicationContext.applicationLanguage(), RegistrationConstants.LABELS)
-				.containsKey(STEP_PROGRESS_KEY)
-						? ApplicationContext.getBundle(ApplicationContext.applicationLanguage(), RegistrationConstants.LABELS)
-								.getString(STEP_PROGRESS_KEY)
-						: "{0} / {1}";
-		progressLabel.setText(MessageFormat.format(pattern, position, count));
+		progressLabel.setText(MessageFormat.format(getLabelOrDefault(STEP_PROGRESS_KEY, "{0} / {1}"), position, count));
 	}
 
 	public void populateScreens() throws Exception {
