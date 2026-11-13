@@ -152,9 +152,13 @@ public class Streamer {
 			}
 		}
 
-		// 255 indicates the start of the jpeg image
-		while (urlStream.read() != 255) {
-
+		// 255 indicates the start of the jpeg image; end of stream (device stopped / unplugged) ends the
+		// streamer thread instead of spinning on read() == -1
+		int nextByte;
+		while ((nextByte = urlStream.read()) != 255) {
+			if (nextByte == -1) {
+				throw new java.io.EOFException("Biometric device stream ended");
+			}
 		}
 
 		// && urlStream.read()!=-1

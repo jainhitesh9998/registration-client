@@ -476,6 +476,8 @@ public class GenericBiometricsController extends BaseController {
 
 					if (mdmBioDevice == null) {
 						generateAlert(RegistrationConstants.ERROR, RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.NO_DEVICE_FOUND));
+						SessionContext.setAutoLogout(true);
+						disableEnableBiometricPane(false);
 						return;
 					}
 
@@ -488,6 +490,9 @@ public class GenericBiometricsController extends BaseController {
 						deviceSpecificationFactory.initializeDeviceMap(true);
 						streamer.setUrlStream(null);
 						generateAlert(RegistrationConstants.ERROR, RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.STREAMING_ERROR));
+						// let the operator retry or pick another modality
+						SessionContext.setAutoLogout(true);
+						disableEnableBiometricPane(false);
 						return;
 					}
 					rCaptureTaskService();
