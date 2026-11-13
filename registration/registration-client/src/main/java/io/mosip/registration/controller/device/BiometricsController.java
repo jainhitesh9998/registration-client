@@ -250,6 +250,10 @@ public class BiometricsController extends BaseController /* implements Initializ
 	@FXML
 	private Label subTypeLabel;
 
+	/* breadcrumb trail of the page header; mirrors the page title (subTypeLabel). Optional node. */
+	@FXML
+	private Label onboardBreadcrumbCurrent;
+
 	@FXML
 	private GridPane parentProgressPane;
 
@@ -287,6 +291,9 @@ public class BiometricsController extends BaseController /* implements Initializ
 		setImage(scanImageView, RegistrationConstants.SCAN_IMG);
 		setImage(backImageView, RegistrationConstants.ARROW_LEFT_IMG);
 		setImage(rightArrowImgView, RegistrationConstants.ARROW_RIGHT_IMG);
+		if (onboardBreadcrumbCurrent != null && subTypeLabel != null) {
+			onboardBreadcrumbCurrent.textProperty().bind(subTypeLabel.textProperty());
+		}
 		
 		currentMap = new LinkedHashMap<>();
 		leftHandImageBoxMap = new HashMap<>();
@@ -352,7 +359,7 @@ public class BiometricsController extends BaseController /* implements Initializ
 		exceptionMap.clear();
 
 		leftPanelImageGridPane.setAlignment(Pos.TOP_LEFT);
-		leftPanelImageGridPane.setPadding(new Insets(70, 100, 100, 70)); // margins around the whole grid
+		leftPanelImageGridPane.setPadding(Insets.EMPTY); // spacing comes from the modality rail in the page layout
 		// (top/right/bottom/left)
 		for (Entry<Entry<String, String>, Map<String, List<List<String>>>> subType : mapToProcess.entrySet()) {
 
@@ -413,7 +420,7 @@ public class BiometricsController extends BaseController /* implements Initializ
 
 				if (rowIndex >= 5) {
 
-					gridPane.setPadding(new Insets(100, 10, 10, 10));
+					gridPane.setPadding(Insets.EMPTY);
 				}
 
 			}

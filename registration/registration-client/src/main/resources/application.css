@@ -4710,3 +4710,53 @@ Working on new Css by taleev
 	-fx-background-insets: 0;
 	-fx-padding: 0;
 }
+
+/* --- Operator onboarding / update operator biometrics ------------------------ */
+.onboardBiometricPage {
+	-fx-background-color: -mx-canvas;
+}
+
+.onboardBiometricCard {
+	-fx-padding: 24;
+	-fx-spacing: 32;
+}
+
+.onboardModalityRail,
+.onboardModalityRail > .viewport {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-padding: 0;
+}
+
+.onboardModalityRail {
+	-fx-min-width: 120px;
+	-fx-pref-width: 120px;
+	-fx-max-width: 120px;
+}
+
+.onboardCapturePanel {
+	-fx-spacing: 20;
+}
+
+.onboardModalityTitle {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 17px;
+	-fx-text-fill: -mx-text;
+	-fx-padding: 0 0 12 0;
+}
+
+.onboardCaptureColumn {
+	-fx-spacing: 16;
+}
+
+.onboardExceptionColumn {
+	-fx-spacing: 12;
+	-fx-min-width: 240px;
+	-fx-pref-width: 240px;
+}
+
+.onboardQualityPanel {
+	-fx-padding: 16 0 0 0;
+	-fx-border-color: -mx-border-subtle transparent transparent transparent;
+	-fx-border-width: 1 0 0 0;
+}
