@@ -4760,3 +4760,17 @@ Working on new Css by taleev
 	-fx-border-color: -mx-border-subtle transparent transparent transparent;
 	-fx-border-width: 1 0 0 0;
 }
+
+/* login: multi-factor step indicator above the sign-in card */
+.loginFormColumn {
+	-fx-spacing: 12;
+}
+
+.loginStep {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 13px;
+	-fx-text-fill: -mx-primary;
+	-fx-background-color: -mx-primary-soft;
+	-fx-background-radius: 999;
+	-fx-padding: 4 12 4 12;
+}

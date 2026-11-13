@@ -5,6 +5,7 @@ import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_
 
 import java.awt.Desktop;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -46,6 +47,7 @@ import io.mosip.registration.dto.UserDTO;
 import io.mosip.registration.dto.mastersync.GenericDto;
 import io.mosip.registration.enums.Role;
 import io.mosip.registration.exception.RegBaseCheckedException;
+import io.mosip.registration.exception.RegistrationExceptionConstants;
 import io.mosip.registration.exception.RegBaseUncheckedException;
 import io.mosip.registration.scheduler.SchedulerUtil;
 import io.mosip.registration.service.bio.BioService;
@@ -176,6 +178,13 @@ public class LoginController extends BaseController implements Initializable {
 
 	@FXML
 	private ImageView mosipLogoImageView;
+
+	/* Multi-factor login progress ("Step 2 of 3"); hidden for single-factor login. Optional node. */
+	@FXML
+	private Label loginStepLabel;
+
+	/** number of login factors configured for the user being authenticated (0 until the user id is validated) */
+	private int loginStepTotal;
 
 	/* Brand panel facts: the registration centre and machine this client is set up for. Optional nodes. */
 	@FXML
@@ -381,7 +390,9 @@ public class LoginController extends BaseController implements Initializable {
 						baseService.isInitialSync());
 			}
 			
-			changeNodeOrientation(contentPane);
+			// the sign-in column (step indicator + cards) follows the language direction as a whole
+			changeNodeOrientation(contentPane.getParent() instanceof javafx.scene.layout.VBox
+					? (javafx.scene.layout.VBox) contentPane.getParent() : contentPane);
 
 		} catch (IOException | RuntimeException exception) {
 			LOGGER.error("Failed to load screen", exception);
@@ -460,6 +471,7 @@ public class LoginController extends BaseController implements Initializable {
 					}
 
 					loginList = loginService.getModesOfLogin(ProcessNames.LOGIN.getType(), roles);
+					loginStepTotal = loginList.size();
 					String loginMode = !loginList.isEmpty() ? loginList.get(RegistrationConstants.PARAM_ZERO) : null;
 					LOGGER.debug("Retrieved corresponding Login mode");
 					if (loginMode == null) {
@@ -737,6 +749,10 @@ public class LoginController extends BaseController implements Initializable {
 		pane.setDisable(true);
 		progressIndicator.setVisible(true);
 
+		// A capture failure (no device, device error) is not a failed authentication: it is reported as such on the
+		// FX thread and does not count towards the invalid-login lock.
+		final String[] captureError = new String[1];
+
 		Service<Boolean> taskService = new Service<Boolean>() {
 			@Override
 			protected Task<Boolean> createTask() {
@@ -755,8 +771,12 @@ public class LoginController extends BaseController implements Initializable {
 							LOGGER.error(LoggerConstants.LOG_REG_LOGIN, APPLICATION_NAME, APPLICATION_ID,
 									"Exception while getting the scanned biometrics for user login: caused by "
 											+ ExceptionUtils.getStackTrace(exception));
-							generateAlert(RegistrationConstants.ERROR,
-									RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.BIOMETRIC_SCANNING_ERROR));
+							boolean noDevice = exception instanceof RegBaseCheckedException
+									&& RegistrationExceptionConstants.MDS_BIODEVICE_NOT_FOUND.getErrorCode()
+											.equals(((RegBaseCheckedException) exception).getErrorCode());
+							captureError[0] = RegistrationUIConstants.getMessageLanguageSpecific(noDevice
+									? RegistrationUIConstants.NO_DEVICE_FOUND
+									: RegistrationUIConstants.BIOMETRIC_SCANNING_ERROR);
 						}
 						return false;
 					}
@@ -769,6 +789,14 @@ public class LoginController extends BaseController implements Initializable {
 		taskService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent workerStateEvent) {
+				if (captureError[0] != null) {
+					pane.setDisable(false);
+					progressIndicator.setVisible(false);
+					generateAlert(RegistrationConstants.ERROR, captureError[0]);
+					LOGGER.info(LoggerConstants.LOG_REG_LOGIN, APPLICATION_NAME, APPLICATION_ID,
+							loginMode + " capture failed");
+					return;
+				}
 				boolean bioLoginStatus = false;
 				if (taskService.getValue()) {
 					bioLoginStatus = validateInvalidLogin(userDTO, "");
@@ -791,6 +819,15 @@ public class LoginController extends BaseController implements Initializable {
 				LOGGER.info(LoggerConstants.LOG_REG_LOGIN, APPLICATION_NAME, APPLICATION_ID,
 						loginMode + " validation done");
 			}
+		});
+		taskService.setOnFailed(workerStateEvent -> {
+			LOGGER.error(LoggerConstants.LOG_REG_LOGIN, APPLICATION_NAME, APPLICATION_ID,
+					loginMode + " validation failed unexpectedly: "
+							+ ExceptionUtils.getStackTrace(taskService.getException()));
+			pane.setDisable(false);
+			progressIndicator.setVisible(false);
+			generateAlert(RegistrationConstants.ERROR,
+					RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.BIOMETRIC_SCANNING_ERROR));
 		});
 	}
 
@@ -837,6 +874,24 @@ public class LoginController extends BaseController implements Initializable {
 		if (!loginList.isEmpty()) {
 			loginList.remove(RegistrationConstants.PARAM_ZERO);
 		}
+		showLoginStep();
+	}
+
+	/**
+	 * Shows which factor of a multi-factor login is on screen. The configured factors are consumed one by one from
+	 * loginList, so the current step is the number already taken from it.
+	 */
+	private void showLoginStep() {
+		if (loginStepLabel == null) {
+			return;
+		}
+		boolean multiFactor = loginStepTotal > 1;
+		if (multiFactor) {
+			int current = Math.min(loginStepTotal, Math.max(1, loginStepTotal - loginList.size()));
+			loginStepLabel.setText(MessageFormat.format(getLabelOrDefault("stepProgress", "{0} / {1}"), current,
+					loginStepTotal));
+		}
+		loginStepLabel.setVisible(multiFactor);
 	}
 
 	private void setPwordLabelVisibility() {

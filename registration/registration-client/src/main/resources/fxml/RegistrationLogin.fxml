@@ -69,6 +69,10 @@
         </StackPane>
         <StackPane maxWidth="Infinity" minWidth="480.0" prefWidth="480.0" styleClass="loginFormPanel" HBox.hgrow="ALWAYS">
           <children>
+    <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" styleClass="loginFormColumn">
+      <children>
+    <!-- multi-factor login: which factor of how many (filled by LoginController) -->
+    <Label fx:id="loginStepLabel" managed="${loginStepLabel.visible}" styleClass="loginStep" visible="false" />
     <AnchorPane fx:id="contentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
       <children>
         <!-- Login cards: each AnchorPane (type required by LoginController) hosts a VBox flow so spacing
@@ -223,6 +227,8 @@
         </AnchorPane>
       </children>
     </AnchorPane>
+      </children>
+    </VBox>
             <HBox id="footer-section" alignment="CENTER" maxHeight="-Infinity" StackPane.alignment="BOTTOM_CENTER">
               <children>
                 <Label text="%mosip.io" />
