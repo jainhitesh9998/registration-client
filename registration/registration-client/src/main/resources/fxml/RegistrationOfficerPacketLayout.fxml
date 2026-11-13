@@ -9,366 +9,146 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
 
-<!-- Home dashboard (PacketHandlerController). Same fx:ids / handlers / node types as before.
-     Every action is a card in an even grid: registration processes (4 columns, built in code), operational
-     and end-of-day tasks (6 columns, identical card size). -->
+<!-- Home (PacketHandlerController). Task dashboard on a centred 1280px column:
+     welcome + sync status, items needing attention, registration processes (cards built in code),
+     end-of-day and operational tasks as list cards. Every fx:id / handler of the previous layout is kept. -->
 <GridPane fx:id="homeContent" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" styleClass="homeContent" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mosip.registration.controller.reg.PacketHandlerController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints percentHeight="100.0" vgrow="ALWAYS" />
-  </rowConstraints>
-   <children>
-      <StackPane>
-         <children>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="homeScroll">
-               <content>
-                  <VBox styleClass="homePage">
-                     <children>
-                        <GridPane fx:id="userOnboardMsg" managed="${userOnboardMessage.visible}" visible="${userOnboardMessage.visible}">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <HBox fx:id="userOnboardMessage" alignment="CENTER_LEFT" styleClass="homeBanner" visible="false">
-                           <children>
-                              <Label graphicTextGap="10.0" styleClass="onboardAlertMsg" text="%onboardAlertMsg" wrapText="true">
-                                 <graphic>
-                                    <ImageView fx:id="tickMarkImageView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../images/tick.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </HBox>
-                     </children>
-                  </GridPane>
-                        <VBox styleClass="homeSection">
-                           <children>
-                              <Label styleClass="homeSectionTitle" text="%registrationTasks" />
-                              <GridPane fx:id="registrationGridPane" hgap="20.0" vgap="20.0" />
-                           </children>
-                        </VBox>
-                        <VBox styleClass="homeSection">
-                           <children>
-                              <Label styleClass="homeSectionTitle" text="%operationalTasks" />
-                              <VBox fx:id="vHolder">
-                                 <children>
-                                    <GridPane hgap="20.0" styleClass="homeGrid">
-                                       <columnConstraints>
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                       <RowConstraints maxHeight="164.0" minHeight="164.0" prefHeight="164.0" vgrow="NEVER" />
-                                       </rowConstraints>
-                                       <children>
-                                    <GridPane fx:id="syncDataPane" onMouseClicked="#syncData" styleClass="homeTile, homeCard" GridPane.columnIndex="0">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="syncDataImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/sync.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%synchronizeData" wrapText="true" />
-                                                <HBox alignment="CENTER_LEFT" spacing="4.0">
-                                                   <children>
-                                                      <Label styleClass="operationalDetails" text="%lastsynctemp" wrapText="true" />
-                                                      <Label fx:id="lastSyncTime" styleClass="operationalDetails" />
-                                                   </children>
-                                                </HBox>
-                                                <GridPane fx:id="progressPane" styleClass="tileProgress">
-                                                  <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                                                  </columnConstraints>
-                                                  <rowConstraints>
-                                                    <RowConstraints vgrow="SOMETIMES" />
-                                                  </rowConstraints>
-                                                   <children>
-                                                      <ProgressBar fx:id="syncProgressBar" maxWidth="Infinity" minHeight="4.0" prefHeight="4.0" progress="0.0" />
-                                                   </children>
-                                                </GridPane>
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                    <GridPane fx:id="downloadPreRegDataPane" onMouseClicked="#downloadPreRegData" styleClass="homeTile, homeCard" GridPane.columnIndex="1">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="downloadPreRegDataImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/DownloadPreRegData.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%downloadPreregistrationData" wrapText="true" />
-                                                <HBox alignment="CENTER_LEFT" spacing="4.0">
-                                                   <children>
-                                                      <Label fx:id="lastPreRegPacketDownloadedTime" styleClass="operationalDetails" wrapText="true" />
-                                                      <ImageView fx:id="inProgressImage" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                    <GridPane fx:id="updateOperatorBiometricsPane" onMouseClicked="#onBoardUser" styleClass="homeTile, homeCard" GridPane.columnIndex="2">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="updateOperatorBiometricsImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/UpdateOperatorBiometrics.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%updateOperatorBiometrics" wrapText="true" />
-                                                <Label fx:id="lastBiometricTime" minHeight="-Infinity" styleClass="operationalDetails" wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                    <GridPane fx:id="uploadPacketPane" onMouseClicked="#uploadPacketToServer" styleClass="homeTile, homeCard" GridPane.columnIndex="3">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="uploadPacketImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/UpdateOperatorBiometrics.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%uploadpacket" wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                    <GridPane fx:id="centerRemapPane" onMouseClicked="#intiateRemapProcess" styleClass="homeTile, homeCard" GridPane.columnIndex="4">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="remapImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/sync.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%remap" wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                    <GridPane fx:id="checkUpdatesPane" onMouseClicked="#hasUpdate" styleClass="homeTile, homeCard" GridPane.columnIndex="5">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="checkUpdatesImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/DownloadPreRegData.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label fx:id="checkUpdates" minHeight="-Infinity" styleClass="operationalTitle" text="%checkUpdates" wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                       </children>
-                                    </GridPane>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </VBox>
-                        <VBox styleClass="homeSection">
-                           <children>
-                              <Label fx:id="eodLabel" managed="${eodLabel.visible}" styleClass="homeSectionTitle" text="%endofDayProcesses" />
-                              <GridPane fx:id="eodProcessGridPane" hgap="20.0" managed="${eodProcessGridPane.visible}" styleClass="homeGrid">
-                                 <columnConstraints>
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                       <ColumnConstraints hgrow="ALWAYS" percentWidth="16.666" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                       <RowConstraints maxHeight="164.0" minHeight="164.0" prefHeight="164.0" vgrow="NEVER" />
-                                 </rowConstraints>
-                                 <children>
-                                    <GridPane fx:id="eodApprovalPane" onMouseClicked="#approvePacket" styleClass="homeTile, homeCard" GridPane.columnIndex="0">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="eodApprovalImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/PendingApproval.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%pendingapproval" wrapText="true" />
-                                                <Label fx:id="pendingApprovalCountLbl" minHeight="-Infinity" styleClass="operationalDetails" text="%applications" wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                    <GridPane fx:id="reRegistrationPane" onMouseClicked="#loadReRegistrationScreen" styleClass="homeTile, homeCard" GridPane.columnIndex="1">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="reRegistrationImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/Re-Registration.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%reRegistration" wrapText="true" />
-                                                <Label fx:id="reRegistrationCountLbl" minHeight="-Infinity" styleClass="operationalDetails" text="%applications" wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                    <GridPane fx:id="dashBoardPane" onMouseClicked="#viewDashBoard" styleClass="homeTile, homeCard" GridPane.columnIndex="2">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="ALWAYS" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints vgrow="NEVER" />
-                                          <RowConstraints valignment="BOTTOM" vgrow="ALWAYS" />
-                                       </rowConstraints>
-                                       <children>
-                                          <StackPane styleClass="tileIcon" GridPane.halignment="LEFT">
-                                             <children>
-                                                <ImageView fx:id="viewReportsImageView" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../images/ViewReports.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </StackPane>
-                                          <VBox styleClass="tileText" GridPane.rowIndex="1">
-                                             <children>
-                                                <Label minHeight="-Infinity" styleClass="operationalTitle" text="%dashBoard" wrapText="true" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </GridPane>
-                                 </children>
-                              </GridPane>
-                           </children>
-                        </VBox>
-                        <HBox id="footer-section">
-                           <children>
-                              <Label text="%regClientVersion" />
-                              <Label text=" : " />
-                              <Label fx:id="versionValueLabel" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </content>
-            </ScrollPane>
-            <ProgressIndicator fx:id="progressIndicator" maxHeight="64.0" maxWidth="64.0" progress="0.0" visible="false" />
-         </children>
-      </StackPane>
-   </children>
+<columnConstraints><ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" /></columnConstraints>
+<rowConstraints><RowConstraints percentHeight="100.0" vgrow="ALWAYS" /></rowConstraints>
+<children>
+<StackPane>
+<children>
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="homeScroll">
+<content>
+<HBox alignment="TOP_CENTER" styleClass="homeCenter">
+<children>
+<VBox maxWidth="1280.0" styleClass="homePage" HBox.hgrow="ALWAYS">
+<children>
+<GridPane fx:id="userOnboardMsg" managed="${userOnboardMessage.visible}" visible="${userOnboardMessage.visible}">
+<columnConstraints><ColumnConstraints hgrow="ALWAYS" /></columnConstraints>
+<rowConstraints><RowConstraints vgrow="NEVER" /></rowConstraints>
+<children>
+<HBox fx:id="userOnboardMessage" alignment="CENTER_LEFT" styleClass="homeBanner" visible="false">
+<children>
+<Label graphicTextGap="10.0" styleClass="onboardAlertMsg" text="%onboardAlertMsg" wrapText="true">
+<graphic><ImageView fx:id="tickMarkImageView" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/tick.png" /></image></ImageView></graphic>
+</Label>
+</children>
+</HBox>
+</children>
+</GridPane>
+<HBox alignment="BOTTOM_LEFT" styleClass="homeHeader">
+<children>
+<VBox alignment="BOTTOM_LEFT" styleClass="homeHeaderText" HBox.hgrow="ALWAYS">
+<children>
+<Label fx:id="homeGreeting" styleClass="homeGreeting" text="%home" />
+<Label fx:id="homeContext" styleClass="homeContext" />
+</children>
+</VBox>
+<GridPane fx:id="syncDataPane" onMouseClicked="#syncData" styleClass="syncCard">
+<columnConstraints>
+<ColumnConstraints hgrow="ALWAYS" />
+<ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+</columnConstraints>
+<rowConstraints>
+<RowConstraints valignment="CENTER" vgrow="NEVER" />
+<RowConstraints vgrow="NEVER" />
+</rowConstraints>
+<children>
+<VBox alignment="CENTER_LEFT" styleClass="syncCardText">
+<children>
+<Label styleClass="syncCardLabel" text="%lastsynctemp" />
+<Label fx:id="lastSyncTime" styleClass="syncCardTime" />
+<ImageView fx:id="syncDataImageView" fitHeight="1.0" fitWidth="1.0" managed="false" pickOnBounds="true" preserveRatio="true" visible="false">
+<image><Image url="@../images/sync.png" /></image>
+</ImageView>
+</children>
+</VBox>
+<Label styleClass="syncButton" text="%homeSyncNow" GridPane.columnIndex="1" />
+<GridPane fx:id="progressPane" GridPane.columnSpan="2" GridPane.rowIndex="1">
+<columnConstraints><ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" /></columnConstraints>
+<rowConstraints><RowConstraints vgrow="NEVER" /></rowConstraints>
+<children>
+<ProgressBar fx:id="syncProgressBar" maxWidth="Infinity" minHeight="3.0" prefHeight="3.0" progress="0.0" />
+</children>
+</GridPane>
+</children>
+</GridPane>
+</children>
+</HBox>
+<HBox fx:id="attentionStrip" styleClass="attentionStrip">
+<children>
+<HBox alignment="CENTER_LEFT" onMouseClicked="#approvePacket" styleClass="attentionCard, attentionWarning" HBox.hgrow="ALWAYS">
+<children>
+<VBox HBox.hgrow="ALWAYS">
+<children>
+<Label styleClass="attentionTitle" text="%pendingapproval" />
+<Label fx:id="attentionApprovalLbl" styleClass="attentionText" />
+</children>
+</VBox>
+<Label styleClass="attentionAction" text="%homeReview" />
+</children>
+</HBox>
+<HBox alignment="CENTER_LEFT" onMouseClicked="#loadReRegistrationScreen" styleClass="attentionCard" HBox.hgrow="ALWAYS">
+<children>
+<VBox HBox.hgrow="ALWAYS">
+<children>
+<Label styleClass="attentionTitle" text="%reRegistration" />
+<Label fx:id="attentionReRegLbl" styleClass="attentionText" />
+</children>
+</VBox>
+<Label styleClass="attentionAction" text="%homeOpen" />
+</children>
+</HBox>
+</children>
+</HBox>
+<VBox styleClass="homeSection">
+<children>
+<Label styleClass="homeSectionTitle" text="%registrationTasks" />
+<GridPane fx:id="registrationGridPane" hgap="16.0" vgap="16.0" />
+</children>
+</VBox>
+<HBox styleClass="homeColumns">
+<children>
+<VBox fx:id="eodCard" maxWidth="Infinity" prefWidth="0.0" styleClass="listCard" HBox.hgrow="ALWAYS">
+<children>
+<Label fx:id="eodLabel" managed="${eodLabel.visible}" styleClass="listCardTitle" text="%endofDayProcesses" />
+<GridPane fx:id="eodProcessGridPane" managed="${eodProcessGridPane.visible}">
+<columnConstraints><ColumnConstraints hgrow="ALWAYS" /></columnConstraints>
+<rowConstraints>
+<RowConstraints vgrow="NEVER" />
+<RowConstraints vgrow="NEVER" />
+<RowConstraints vgrow="NEVER" />
+</rowConstraints>
+<children><GridPane fx:id="eodApprovalPane" onMouseClicked="#approvePacket" styleClass="homeTile, listRow" GridPane.rowIndex="0"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="eodApprovalImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/PendingApproval.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%pendingapproval" wrapText="true" /></children></VBox><Label fx:id="pendingApprovalCountLbl" styleClass="rowPill, operationalDetails" text="%applications" GridPane.columnIndex="2" /><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane><GridPane fx:id="reRegistrationPane" onMouseClicked="#loadReRegistrationScreen" styleClass="homeTile, listRow" GridPane.rowIndex="1"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="reRegistrationImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/Re-Registration.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%reRegistration" wrapText="true" /></children></VBox><Label fx:id="reRegistrationCountLbl" styleClass="rowPill, operationalDetails" text="%applications" GridPane.columnIndex="2" /><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane><GridPane fx:id="dashBoardPane" onMouseClicked="#viewDashBoard" styleClass="homeTile, listRow" GridPane.rowIndex="2"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="viewReportsImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/ViewReports.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%dashBoard" wrapText="true" /></children></VBox><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane></children>
+</GridPane>
+</children>
+</VBox>
+<VBox maxWidth="Infinity" prefWidth="0.0" styleClass="listCard" HBox.hgrow="ALWAYS">
+<children>
+<Label styleClass="listCardTitle" text="%operationalTasks" />
+<VBox fx:id="vHolder">
+<children><GridPane fx:id="downloadPreRegDataPane" onMouseClicked="#downloadPreRegData" styleClass="homeTile, listRow"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="downloadPreRegDataImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/DownloadPreRegData.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%downloadPreregistrationData" wrapText="true" /><HBox alignment="CENTER_LEFT" spacing="6.0"><children><Label fx:id="lastPreRegPacketDownloadedTime" minHeight="-Infinity" styleClass="rowMeta, operationalDetails" wrapText="true" /><ImageView fx:id="inProgressImage" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" /></children></HBox></children></VBox><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane><GridPane fx:id="uploadPacketPane" onMouseClicked="#uploadPacketToServer" styleClass="homeTile, listRow"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="uploadPacketImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/UpdateOperatorBiometrics.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%uploadpacket" wrapText="true" /></children></VBox><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane><GridPane fx:id="updateOperatorBiometricsPane" onMouseClicked="#onBoardUser" styleClass="homeTile, listRow"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="updateOperatorBiometricsImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/UpdateOperatorBiometrics.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%updateOperatorBiometrics" wrapText="true" /><Label fx:id="lastBiometricTime" minHeight="-Infinity" styleClass="rowMeta, operationalDetails" wrapText="true" /></children></VBox><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane><GridPane fx:id="centerRemapPane" onMouseClicked="#intiateRemapProcess" styleClass="homeTile, listRow"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="remapImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/sync.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%remap" wrapText="true" /></children></VBox><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane><GridPane fx:id="checkUpdatesPane" onMouseClicked="#hasUpdate" styleClass="homeTile, listRow"><columnConstraints><ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="52.0" prefWidth="52.0" /><ColumnConstraints hgrow="ALWAYS" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" /><ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="24.0" prefWidth="24.0" /></columnConstraints><rowConstraints><RowConstraints valignment="CENTER" vgrow="ALWAYS" /></rowConstraints><children><StackPane styleClass="rowIcon"><children><ImageView fx:id="checkUpdatesImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../images/DownloadPreRegData.png" /></image></ImageView></children></StackPane><VBox alignment="CENTER_LEFT" styleClass="rowText" GridPane.columnIndex="1"><children><Label fx:id="checkUpdates" minHeight="-Infinity" styleClass="rowTitle, operationalTitle" text="%checkUpdates" wrapText="true" /></children></VBox><Label styleClass="rowChevron" text="&#8250;" GridPane.columnIndex="3" /></children></GridPane></children>
+</VBox>
+</children>
+</VBox>
+</children>
+</HBox>
+<HBox id="footer-section">
+<children>
+<Label text="%regClientVersion" />
+<Label text=" : " />
+<Label fx:id="versionValueLabel" />
+</children>
+</HBox>
+</children>
+</VBox>
+</children>
+</HBox>
+</content>
+</ScrollPane>
+<ProgressIndicator fx:id="progressIndicator" maxHeight="64.0" maxWidth="64.0" progress="0.0" visible="false" />
+</children>
+</StackPane>
+</children>
 </GridPane>

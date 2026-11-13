@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.registration.enums.Role;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.AuditEvent;
 import io.mosip.registration.constants.AuditReferenceIdTypes;
@@ -193,6 +194,10 @@ public class HeaderController extends BaseController {
 	@Autowired
 	PacketHandlerController packetHandlerController;
 
+	/** "End of day" entry of the app bar navigation; shown to supervisors only. */
+	@FXML
+	private Label navEndOfDay;
+
 	@Autowired
 	private RestartController restartController;
 
@@ -256,6 +261,9 @@ public class HeaderController extends BaseController {
 		setImage(homeImgView	, RegistrationConstants.HOME_IMG);
 
 		registrationOfficerName.setText(SessionContext.userContext().getName());
+		if (navEndOfDay != null) {
+			navEndOfDay.setVisible(Role.hasSupervisorRole(SessionContext.userContext().getRoles()));
+		}
 		registrationOfficeId.setText(RegistrationSystemPropertiesChecker.getMachineId());
 		registrationOfficeLocation
 				.setText(SessionContext.userContext().getRegistrationCenterDetailDTO().getRegistrationCenterName() + " ("
@@ -382,6 +390,30 @@ public class HeaderController extends BaseController {
 		// Enable Auto-Logout
 		SessionContext.setAutoLogout(true);
 
+	}
+
+	/**
+	 * App bar navigation: end of day (pending approval), after the usual page-navigation confirmation.
+	 *
+	 * @param event the click event
+	 */
+	@FXML
+	public void openEndOfDay(MouseEvent event) {
+		if (pageNavigantionAlert()) {
+			packetHandlerController.approvePacket();
+		}
+	}
+
+	/**
+	 * App bar navigation: application upload, after the usual page-navigation confirmation.
+	 *
+	 * @param event the click event
+	 */
+	@FXML
+	public void openUploadPacket(MouseEvent event) {
+		if (pageNavigantionAlert()) {
+			packetHandlerController.uploadPacket();
+		}
 	}
 
 	/**

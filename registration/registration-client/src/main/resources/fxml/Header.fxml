@@ -6,8 +6,9 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<!-- App bar. Same fx:ids / handlers as before (HeaderController contract unchanged); laid out as one flow:
-     [logo][home] | [operator][centre][machine] ........ [shortcuts][online/offline][settings][menu] -->
+<!-- App bar (HeaderController). Brand + primary navigation on the left, connection status, settings, the
+     signed-in user and the user menu on the right. All original fx:ids / handlers are kept; the centre and
+     machine labels stay (hidden) because the controller still fills them; Home shows that context instead. -->
 <GridPane fx:id="headerParent" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="56.0" prefWidth="1000.0" styleClass="headerParentBorder" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.mosip.registration.controller.reg.HeaderController">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" percentWidth="100.0" />
@@ -18,68 +19,43 @@
    <children>
       <HBox alignment="CENTER_LEFT" styleClass="appBar">
          <children>
-            <ImageView fx:id="mosipLogo" fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/logo-final-small.png" />
-               </image>
-            </ImageView>
-            <StackPane styleClass="appBarIconButton">
+            <HBox alignment="CENTER_LEFT" styleClass="appBrand">
                <children>
-                  <ImageView fx:id="homeImgView" fitHeight="22.0" fitWidth="22.0" onMousePressed="#redirectHome" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="mosipLogo" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../images/Home-small.png" />
+                        <Image url="@../images/logo-final-small.png" />
                      </image>
                   </ImageView>
+                  <Label styleClass="appBrandTitle" text="%regclient" />
                </children>
-            </StackPane>
-            <Region styleClass="appBarDivider" />
-            <HBox alignment="CENTER_LEFT" styleClass="headerDetails">
+            </HBox>
+            <HBox alignment="CENTER_LEFT" styleClass="appNav">
                <children>
-                  <Label fx:id="registrationOfficerName" graphicTextGap="8.0" styleClass="appBarChip" text="%roname">
-                     <graphic>
-                        <ImageView fx:id="userImageView" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/User.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Label>
-                  <Label fx:id="registrationOfficeLocation" graphicTextGap="8.0" styleClass="appBarChip" text="%rooffice">
-                     <graphic>
-                        <ImageView fx:id="regCenterLocationImgView" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/RegCentreLocation.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Label>
-                  <Label fx:id="registrationOfficeId" graphicTextGap="8.0" styleClass="appBarChip" text="%roid">
-                     <graphic>
-                        <ImageView fx:id="registrationOfficeIdImageView" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/system.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Label>
+                  <Label onMouseClicked="#redirectHome" styleClass="appNavItem" text="%home" />
+                  <Label fx:id="navEndOfDay" managed="${navEndOfDay.visible}" onMouseClicked="#openEndOfDay" styleClass="appNavItem" text="%endofDayProcesses" />
+                  <Label onMouseClicked="#openUploadPacket" styleClass="appNavItem" text="%uploadpacket" />
                </children>
             </HBox>
             <Region HBox.hgrow="ALWAYS" />
             <HBox fx:id="settingsHBox" alignment="CENTER_RIGHT" spacing="16.0" />
-            <StackPane styleClass="appBarIconButton">
+            <StackPane styleClass="appStatus">
                <children>
-                  <HBox fx:id="online" alignment="CENTER">
+                  <HBox fx:id="online" alignment="CENTER_LEFT" styleClass="appStatusItem">
                      <children>
-                        <ImageView fx:id="availableIcon1" fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                        <Region styleClass="statusDot, statusDotOnline" />
+                        <Label styleClass="appStatusText" text="%homeOnline" />
+                        <ImageView fx:id="availableIcon1" fitHeight="1.0" fitWidth="1.0" managed="false" pickOnBounds="true" preserveRatio="true" visible="false">
                            <image>
                               <Image url="@../images/Online.png" />
                            </image>
                         </ImageView>
                      </children>
                   </HBox>
-                  <HBox fx:id="offline" alignment="CENTER">
+                  <HBox fx:id="offline" alignment="CENTER_LEFT" styleClass="appStatusItem">
                      <children>
-                        <ImageView fx:id="availableIcon" fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                        <Region styleClass="statusDot, statusDotOffline" />
+                        <Label styleClass="appStatusText" text="%homeOffline" />
+                        <ImageView fx:id="availableIcon" fitHeight="1.0" fitWidth="1.0" managed="false" pickOnBounds="true" preserveRatio="true" visible="false">
                            <image>
                               <Image url="@../images/Offline.png" />
                            </image>
@@ -90,13 +66,22 @@
             </StackPane>
             <HBox fx:id="settingsIconHBox" alignment="CENTER" styleClass="appBarIconButton" visible="false">
                <children>
-                  <ImageView fitHeight="22.0" fitWidth="22.0" onMouseClicked="#openSettings" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#openSettings" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/settings.png" />
                      </image>
                   </ImageView>
                </children>
             </HBox>
+            <Label fx:id="registrationOfficerName" graphicTextGap="10.0" styleClass="appUserChip" text="%roname">
+               <graphic>
+                  <ImageView fx:id="userImageView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/User.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Label>
             <MenuBar fx:id="menu" styleClass="menuBar">
                <menus>
                   <Menu fx:id="homeSelectionMenu" mnemonicParsing="false" onAction="#closeOperations">
@@ -117,6 +102,25 @@
                   </Menu>
                </menus>
             </MenuBar>
+            <HBox managed="false" visible="false">
+               <children>
+                  <ImageView fx:id="homeImgView" fitHeight="1.0" fitWidth="1.0" onMousePressed="#redirectHome" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Home-small.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="registrationOfficeLocation" text="%rooffice">
+                     <graphic>
+                        <ImageView fx:id="regCenterLocationImgView" fitHeight="1.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true" />
+                     </graphic>
+                  </Label>
+                  <Label fx:id="registrationOfficeId" text="%roid">
+                     <graphic>
+                        <ImageView fx:id="registrationOfficeIdImageView" fitHeight="1.0" fitWidth="1.0" pickOnBounds="true" preserveRatio="true" />
+                     </graphic>
+                  </Label>
+               </children>
+            </HBox>
          </children>
       </HBox>
    </children>

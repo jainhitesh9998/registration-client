@@ -3987,3 +3987,336 @@ Working on new Css by taleev
 .pageHeaderGrid {
 	-fx-padding: 0 32 0 32;
 }
+
+/* ==========================================================================
+   App bar + Home dashboard (approved design)
+   ========================================================================== */
+.appBar {
+	-fx-padding: 0 20 0 24;
+	-fx-spacing: 12;
+}
+
+.appBrand {
+	-fx-spacing: 10;
+	-fx-padding: 0 12 0 0;
+}
+
+.appBrandTitle {
+	-fx-text-fill: #FFFFFF;
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 15px;
+}
+
+.appNav {
+	-fx-spacing: 4;
+}
+
+.appNavItem {
+	-fx-text-fill: #DCD4FF;
+	-fx-font-size: 14px;
+	-fx-padding: 8 14 8 14;
+	-fx-background-radius: 8;
+	-fx-cursor: hand;
+}
+
+.appNavItem:hover {
+	-fx-background-color: rgba(255, 255, 255, 0.12);
+	-fx-text-fill: #FFFFFF;
+}
+
+.appStatusItem {
+	-fx-spacing: 8;
+	-fx-padding: 0 8 0 8;
+}
+
+.statusDot {
+	-fx-min-width: 8px;
+	-fx-max-width: 8px;
+	-fx-min-height: 8px;
+	-fx-max-height: 8px;
+	-fx-background-radius: 4;
+}
+
+.statusDotOnline { -fx-background-color: #48D17A; }
+.statusDotOffline { -fx-background-color: #FFAB27; }
+
+.appStatusText {
+	-fx-text-fill: #DCD4FF;
+	-fx-font-size: 13px;
+}
+
+.appUserChip {
+	-fx-text-fill: #FFFFFF;
+	-fx-font-size: 13px;
+	-fx-background-color: rgba(255, 255, 255, 0.10);
+	-fx-background-radius: 999;
+	-fx-padding: 6 14 6 8;
+}
+
+/* Home page: centred, max 1280px */
+.homeCenter {
+	-fx-padding: 0;
+}
+
+.homePage {
+	-fx-padding: 32 32 40 32;
+	-fx-spacing: 28;
+}
+
+.homeHeader {
+	-fx-spacing: 16;
+}
+
+.homeHeaderText {
+	-fx-spacing: 4;
+}
+
+.homeGreeting {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 28px;
+	-fx-text-fill: -mx-text;
+}
+
+.homeContext {
+	-fx-font-size: 14px;
+	-fx-text-fill: #5C5C66;
+}
+
+.syncCard {
+	-fx-background-color: -mx-surface;
+	-fx-background-radius: 12;
+	-fx-border-color: -mx-border-subtle;
+	-fx-border-radius: 12;
+	-fx-padding: 10 10 10 16;
+	-fx-hgap: 16;
+	-fx-vgap: 8;
+	-fx-cursor: hand;
+}
+
+.syncCard:hover {
+	-fx-border-color: -mx-primary-soft-border;
+}
+
+.syncCardLabel {
+	-fx-font-size: 12px;
+	-fx-text-fill: #5C5C66;
+}
+
+.syncCardTime {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 14px;
+	-fx-text-fill: -mx-text;
+}
+
+.syncButton {
+	-fx-min-height: 40px;
+	-fx-padding: 0 16 0 16;
+	-fx-alignment: center;
+	-fx-background-color: -mx-surface;
+	-fx-border-color: -mx-primary;
+	-fx-border-radius: 8;
+	-fx-background-radius: 8;
+	-fx-text-fill: -mx-primary;
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 14px;
+}
+
+.syncCard:hover .syncButton {
+	-fx-background-color: -mx-primary-soft;
+}
+
+.syncCard .progress-bar > .track {
+	-fx-background-color: transparent;
+}
+
+/* items needing attention */
+.attentionStrip {
+	-fx-spacing: 16;
+}
+
+.attentionCard {
+	-fx-background-color: -mx-surface;
+	-fx-background-radius: 12;
+	-fx-border-color: -mx-border-subtle;
+	-fx-border-radius: 12;
+	-fx-padding: 16 20 16 20;
+	-fx-spacing: 16;
+	-fx-cursor: hand;
+}
+
+.attentionWarning {
+	-fx-background-color: #FFF7E6;
+	-fx-border-color: #FFE0B2;
+}
+
+.attentionCard:hover {
+	-fx-border-color: -mx-primary-soft-border;
+}
+
+.attentionWarning:hover {
+	-fx-border-color: #FFC973;
+}
+
+.attentionTitle {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 15px;
+	-fx-text-fill: -mx-text;
+}
+
+.attentionText {
+	-fx-font-size: 13px;
+	-fx-text-fill: #5C5C66;
+}
+
+.attentionWarning .attentionText {
+	-fx-text-fill: #6B4A1F;
+}
+
+.attentionAction {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 14px;
+	-fx-text-fill: -mx-primary;
+}
+
+.attentionWarning .attentionAction {
+	-fx-text-fill: #AD4E00;
+}
+
+/* registration process cards (built in PacketHandlerController) */
+.processCard {
+	-fx-padding: 24;
+	-fx-vgap: 12;
+}
+
+.processCard .operationalTitle {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 17px;
+	-fx-text-fill: -mx-text;
+}
+
+.processDescription {
+	-fx-font-size: 13px;
+	-fx-text-fill: #5C5C66;
+}
+
+.processCard.primaryProcess {
+	-fx-background-color: -mx-primary;
+	-fx-border-color: -mx-primary;
+}
+
+.processCard.primaryProcess:hover {
+	-fx-background-color: -mx-primary-hover;
+	-fx-border-color: -mx-primary-hover;
+}
+
+.processCard.primaryProcess .operationalTitle {
+	-fx-text-fill: #FFFFFF;
+}
+
+.processCard.primaryProcess .processDescription {
+	-fx-text-fill: #DCD4FF;
+}
+
+.processCard.primaryProcess .tileIcon {
+	-fx-background-color: #FFFFFF;
+}
+
+/* end-of-day and operations: list cards */
+.homeColumns {
+	-fx-spacing: 24;
+	-fx-alignment: top-left;
+}
+
+.listCard {
+	-fx-background-color: -mx-surface;
+	-fx-background-radius: 14;
+	-fx-border-color: -mx-border-subtle;
+	-fx-border-radius: 14;
+	-fx-padding: 0 0 6 0;
+}
+
+.listCardTitle {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 16px;
+	-fx-text-fill: -mx-text;
+	-fx-padding: 18 20 10 20;
+}
+
+.homeTile.listRow,
+.listRow {
+	-fx-background-color: transparent;
+	-fx-background-radius: 0;
+	-fx-border-color: #EFEEF4 transparent transparent transparent;
+	-fx-border-width: 1 0 0 0;
+	-fx-border-radius: 0;
+	-fx-effect: null;
+	-fx-padding: 12 20 12 20;
+	-fx-min-height: 60px;
+	-fx-cursor: hand;
+}
+
+.homeTile.listRow:hover,
+.listRow:hover {
+	-fx-background-color: -mx-surface-muted;
+	-fx-border-color: #EFEEF4 transparent transparent transparent;
+	-fx-effect: null;
+}
+
+.rowIcon {
+	-fx-min-width: 36px;
+	-fx-max-width: 36px;
+	-fx-min-height: 36px;
+	-fx-max-height: 36px;
+	-fx-background-color: -mx-primary-soft;
+	-fx-background-radius: 10;
+}
+
+.rowText {
+	-fx-spacing: 2;
+}
+
+.listRow .rowTitle {
+	-fx-font-family: 'Noto Sans Medium';
+	-fx-font-size: 15px;
+	-fx-text-fill: -mx-text;
+}
+
+.listRow .rowMeta {
+	-fx-font-size: 12px;
+	-fx-text-fill: #5C5C66;
+}
+
+.listRow .rowPill {
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 12px;
+	-fx-text-fill: -mx-primary;
+	-fx-background-color: -mx-primary-soft;
+	-fx-background-radius: 999;
+	-fx-padding: 3 10 3 10;
+}
+
+.rowChevron {
+	-fx-font-size: 20px;
+	-fx-text-fill: #A1A1A1;
+}
+
+#registrationGridPane .processCard.primaryProcess .operationalTitle {
+	-fx-text-fill: #FFFFFF;
+}
+
+.homeColumns {
+	-fx-fill-height: false;
+}
+
+/* Save to device is the secondary action next to Upload */
+#saveToDevice {
+	-fx-background-color: -mx-surface;
+	-fx-border-color: -mx-primary;
+	-fx-border-radius: 8;
+	-fx-background-radius: 8;
+	-fx-text-fill: -mx-primary;
+}
+
+#saveToDevice:hover {
+	-fx-background-color: -mx-primary-soft;
+}

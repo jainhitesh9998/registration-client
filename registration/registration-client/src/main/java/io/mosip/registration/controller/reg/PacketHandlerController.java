@@ -5,6 +5,7 @@ import static io.mosip.registration.constants.RegistrationConstants.ACKNOWLEDGEM
 import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.registration.constants.RegistrationConstants.APPLICATION_NAME;
 
+import java.text.MessageFormat;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Controller;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManagerBuilder;
+import io.mosip.registration.util.healthcheck.RegistrationSystemPropertiesChecker;
+import io.mosip.registration.dto.RegistrationCenterDetailDTO;
 import io.mosip.registration.config.AppConfig;
 import io.mosip.registration.constants.AuditEvent;
 import io.mosip.registration.constants.AuditReferenceIdTypes;
@@ -99,6 +102,20 @@ public class PacketHandlerController extends BaseController implements Initializ
 
 	@FXML
 	private Label pendingApprovalCountLbl;
+
+	/* Home header and attention strip (optional: absent in older/customised layouts, so always null-checked) */
+	@FXML
+	private Label homeGreeting;
+	@FXML
+	private Label homeContext;
+	@FXML
+	private HBox attentionStrip;
+	@FXML
+	private Label attentionApprovalLbl;
+	@FXML
+	private Label attentionReRegLbl;
+	@FXML
+	private VBox eodCard;
 
 	@FXML
 	private Label reRegistrationCountLbl;
@@ -311,6 +328,7 @@ public class PacketHandlerController extends BaseController implements Initializ
 			setLastUpdateTime();
 			pendingApprovalCountLbl.setText(RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.NO_PENDING_APPLICATIONS));
 			reRegistrationCountLbl.setText(RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.NO_RE_REGISTER_APPLICATIONS));
+			initHomeHeader();
 
 			List<RegistrationApprovalDTO> pendingApprovalRegistrations = registrationApprovalService
 					.getEnrollmentByStatus(RegistrationClientStatusCode.CREATED.getCode());
@@ -824,7 +842,70 @@ public class PacketHandlerController extends BaseController implements Initializ
 		}
 	}
 
-	private static final double HOME_TILE_HEIGHT = 156.0;
+	private static final double HOME_TILE_HEIGHT = 176.0;
+	private static final String HOME_WELCOME_KEY = "homeWelcome";
+	private static final String PROCESS_DESCRIPTION_KEY_PREFIX = "processDescription.";
+
+	/**
+	 * Fills the Home header (welcome line, centre and machine) and wires the attention strip. The strip and the
+	 * end-of-day card follow the visibility the role check above gives {@code eodProcessGridPane}, and their
+	 * texts are bound to the existing count labels so they stay current whenever those are refreshed.
+	 */
+	private void initHomeHeader() {
+		try {
+			if (homeGreeting != null) {
+				String name = SessionContext.userContext().getName();
+				homeGreeting.setText(MessageFormat.format(getLabel(HOME_WELCOME_KEY, "{0}"), name == null ? "" : name));
+			}
+			if (homeContext != null) {
+				StringBuilder context = new StringBuilder();
+				RegistrationCenterDetailDTO centre = SessionContext.userContext().getRegistrationCenterDetailDTO();
+				if (centre != null && centre.getRegistrationCenterName() != null) {
+					context.append(centre.getRegistrationCenterName()).append(" (")
+							.append(centre.getRegistrationCenterId()).append(")");
+				}
+				String machine = RegistrationSystemPropertiesChecker.getMachineId();
+				if (machine != null && !machine.isBlank()) {
+					if (context.length() > 0) {
+						context.append("  \u00B7  ");
+					}
+					context.append(machine);
+				}
+				homeContext.setText(context.toString());
+			}
+			if (attentionApprovalLbl != null) {
+				attentionApprovalLbl.textProperty().bind(pendingApprovalCountLbl.textProperty());
+			}
+			if (attentionReRegLbl != null) {
+				attentionReRegLbl.textProperty().bind(reRegistrationCountLbl.textProperty());
+			}
+			if (attentionStrip != null) {
+				attentionStrip.visibleProperty().bind(eodProcessGridPane.visibleProperty());
+				attentionStrip.managedProperty().bind(attentionStrip.visibleProperty());
+			}
+			if (eodCard != null) {
+				eodCard.visibleProperty().bind(eodProcessGridPane.visibleProperty());
+				eodCard.managedProperty().bind(eodCard.visibleProperty());
+			}
+		} catch (RuntimeException exception) {
+			// the dashboard must still load if any of this context is unavailable
+			LOGGER.error("Failed to initialise the home header", exception);
+		}
+	}
+
+	/** Label from the application-language bundle, or {@code fallback} when the key is not defined. */
+	private String getLabel(String key, String fallback) {
+		try {
+			ResourceBundle labels = ApplicationContext.getBundle(ApplicationContext.applicationLanguage(),
+					RegistrationConstants.LABELS);
+			if (labels != null && labels.containsKey(key)) {
+				return labels.getString(key);
+			}
+		} catch (RuntimeException exception) {
+			LOGGER.debug("Label {} not available", key);
+		}
+		return fallback;
+	}
 	private static final int HOME_PROCESS_COLUMNS = 4;
 
 	private void addParentRowConstraints(int size) {
@@ -858,7 +939,12 @@ public class PacketHandlerController extends BaseController implements Initializ
 		RowConstraints titleRow = new RowConstraints();
 		titleRow.setVgrow(Priority.ALWAYS);
 		titleRow.setValignment(VPos.BOTTOM);
-		gridPane.getRowConstraints().addAll(iconRow, titleRow);
+		RowConstraints descriptionRow = new RowConstraints();
+		descriptionRow.setVgrow(Priority.NEVER);
+		gridPane.getRowConstraints().addAll(iconRow, titleRow, descriptionRow);
+		if (FlowType.NEW.name().equalsIgnoreCase(processSpecDto.getFlow())) {
+			gridPane.getStyleClass().add("primaryProcess");
+		}
 		gridPane.setOnMouseClicked(event -> {
 			selectLanguage(event);
 		});
@@ -885,6 +971,15 @@ public class PacketHandlerController extends BaseController implements Initializ
 		label.getStyleClass().add("operationalTitle");
 		label.setMinHeight(Region.USE_PREF_SIZE);
 		gridPane.add(label, 0, 1);
+
+		String description = getLabel(PROCESS_DESCRIPTION_KEY_PREFIX + processSpecDto.getFlow(), null);
+		if (description != null && !description.isBlank()) {
+			Label descriptionLabel = new Label(description);
+			descriptionLabel.setWrapText(true);
+			descriptionLabel.setMinHeight(Region.USE_PREF_SIZE);
+			descriptionLabel.getStyleClass().add("processDescription");
+			gridPane.add(descriptionLabel, 0, 2);
+		}
 		changeNodeOrientation(gridPane);
 		return gridPane;
 	}

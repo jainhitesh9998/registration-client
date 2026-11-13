@@ -33,8 +33,8 @@ All visual values are tokens on `.root` in
 
 | Screen | What changed |
 | --- | --- |
-| App bar (`Header.fxml`) | One 56px flow: logo, home, and pill chips for operator / centre / machine on the left; status, settings and menu on the right |
-| Home (`RegistrationOfficerPacketLayout.fxml`) | Every action is a card (icon badge, title, meta line) in an even grid: registration processes as four large primary cards, operational and end-of-day tasks in a 6-column grid of identical cards |
+| App bar (`Header.fxml`) | Brand (logo + product name) and primary navigation (Home, End of day for supervisors, Application upload, each behind the existing page-navigation confirmation) on the left; online status, settings, the signed-in user and the user menu on the right |
+| Home (`RegistrationOfficerPacketLayout.fxml`) | Task dashboard on a centred 1280px column: welcome line with centre and machine, last-sync card with Sync now, items needing attention (live counts, supervisors only), registration processes as cards with a one-line description (New registration as the primary card), end-of-day and operational tasks as list cards |
 | Registration flow (`GenericRegistrationLayout.fxml`) | Page title above the steps, the steps in one full-width card with underline tabs, an action bar with the status message and primary action |
 | Form fields (code-built) | Labels above inputs (6px gap); hidden validation and transliteration helpers no longer reserve space; chip groups labelled like other fields; 24/16px gaps |
 | Update UIN | "Details to update" are selectable option cards (rounded-square checkbox, clear selected state) instead of round pills |
