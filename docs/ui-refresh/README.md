@@ -39,7 +39,10 @@ All visual values are tokens on `.root` in
 | Form fields (code-built) | Labels above inputs (6px gap); hidden validation and transliteration helpers no longer reserve space; chip groups labelled like other fields; 24/16px gaps |
 | Update UIN | "Details to update" are selectable option cards (rounded-square checkbox, clear selected state) instead of round pills |
 | Server HTML templates | Acknowledgement, preview, dashboard and consent are themed by a client-side layer (`template-theme.css`, applied as the WebView user stylesheet through `TemplateTheme.apply`). Template data is not modified, so the theme survives every sync |
-| Pending approval | Breadcrumb, title and Approve/Reject header; list and preview as matching cards; action bar with guidance and Authenticate |
+| Page template (Pending approval, Re-registration, Application upload, Acknowledgement, Settings) | One structure everywhere: page header (breadcrumb, title, actions on the right) on the 32px page margin, content in cards on the canvas, one action bar at the bottom |
+| Dashboard | The server template's floated boxes are laid out as a grid by the template theme: a full-width row of stat tiles, then Users and Sync activities as two equal cards; the WebView fills the page |
+| Biometrics capture | Fixed 152px modality rail with the capture panel next to it (no dead gap); heading aligned to the panel |
+| Operator authentication | Pane titles centred on the same axis as the credential fields |
 | Login (`RegistrationLogin.fxml`) | Split layout: a brand panel (illustration under an indigo scrim, MOSIP logo, product name) and a sign-in panel with the form vertically centred. Cards collapse when hidden, and the language picker collapses when unused |
 | Everything else | Picks up the tokens: tables, dialogs, menus, settings, biometrics, onboarding, upload, re-registration |
 
@@ -98,6 +101,7 @@ from `mosip/mosip-data`. A dev-only harness, kept outside this repo, seeded that
   client theme layer restyles them; printed or stored copies keep the template's own styling unless the
   templates are also updated on the server. The `$keyList.get("activityValue")` text on the Dashboard is an
   unresolved variable in MOSIP's sample template data.
+- **Not yet redesigned:** the operator onboarding biometrics screen (`Biometrics.fxml` / `BiometricsController`) keeps its original arrangement inside the themed card. It is positioned partly in code and needs its own pass.
 - **Pre-existing on `develop`, not changed here:** `UpdateUINController` wires a hover listener to
   `backBtn`, but `UpdateUIN.fxml` has no such element. The NPE is caught and logged, and the screen still
   works.

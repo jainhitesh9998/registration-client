@@ -870,8 +870,8 @@
 }
 
 .reRegInformToggle {
-	-fx-pref-height: 30.0px;
-	-fx-pref-width: 120.0px;
+	-fx-pref-height: -1;
+	-fx-pref-width: -1;
 	-fx-background-color: -mx-surface;
 	-fx-border-color: -mx-primary;
 	-fx-font-family: 'Noto Sans Medium';
@@ -879,11 +879,13 @@
 	-fx-background-radius: 8;
 	-fx-border-radius: 8;
 	-fx-cursor: hand;
+	-fx-min-width: 160px;
+	-fx-min-height: 44px;
 }
 
 .reRegCantInformToggle {
-	-fx-pref-height: 30.0px;
-	-fx-pref-width: 120.0px;
+	-fx-pref-height: -1;
+	-fx-pref-width: -1;
 	-fx-background-color: -mx-primary;
 	-fx-text-fill: -mx-on-primary;
 	-fx-font-family: 'Noto Sans Medium';
@@ -891,6 +893,8 @@
 	-fx-background-radius: 8;
 	-fx-border-radius: 8;
 	-fx-cursor: hand;
+	-fx-min-width: 160px;
+	-fx-min-height: 44px;
 }
 
 .reRegCantInformToggle:hover {
@@ -3944,4 +3948,42 @@ Working on new Css by taleev
 .ackPageButton,
 .ackBackButton {
 	-fx-min-width: 200px;
+}
+
+/* HtmlFxControl titles its HTML block with a Label carrying the text-input class; render it as a label */
+.label.demoGraphicTextField {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-pref-width: -1;
+	-fx-min-width: 0;
+	-fx-max-width: Infinity;
+	-fx-pref-height: -1;
+	-fx-min-height: 0;
+	-fx-padding: 0;
+	-fx-font-family: 'Noto Sans Medium';
+	-fx-font-size: 14px;
+	-fx-text-fill: -mx-text-secondary;
+}
+
+/* Settings pages: content sits on the canvas (job / device cards) or in a card (config table) */
+#jobSettingsRoot .scroll-pane,
+#jobSettingsRoot .scroll-pane > .viewport,
+#deviceSettingsRoot .scroll-pane,
+#deviceSettingsRoot .scroll-pane > .viewport {
+	-fx-background-color: transparent;
+	-fx-background: transparent;
+	-fx-border-color: transparent;
+}
+
+#configSettingsRoot .contentCard .table-view {
+	-fx-background-color: transparent;
+}
+
+/* receipt card: the document sits on a card, page canvas around it */
+.documentCard {
+	-fx-padding: 8;
+}
+
+.pageHeaderGrid {
+	-fx-padding: 0 32 0 32;
 }

@@ -137,10 +137,10 @@ public class BiometricFxControl extends FxControl {
 		label.getStyleClass().add(RegistrationConstants.QUALITY_BOX_LABEL);
 
 		GridPane gridPane = createGridPane();
-		gridPane.setHgap(10);
+		gridPane.setHgap(24);
 		gridPane.setId(fieldName);
 		gridPane.add(label,1,0);
-		GridPane.setHalignment(label, HPos.CENTER);
+		GridPane.setHalignment(label, HPos.LEFT);
 		GridPane.setValignment(label, VPos.TOP);
 		this.node = gridPane;
 
@@ -167,7 +167,7 @@ public class BiometricFxControl extends FxControl {
 					captureDetails.visibleProperty().bind(gridPane.visibleProperty());
 					captureDetails.managedProperty().bind(gridPane.managedProperty());
 
-					GridPane.setHalignment(captureDetails, HPos.CENTER);
+					GridPane.setHalignment(captureDetails, HPos.LEFT);
 					GridPane.setValignment(captureDetails, VPos.TOP);
 					gridPane.add(captureDetails,1,1);
 				} catch (IOException e) {
@@ -189,19 +189,18 @@ public class BiometricFxControl extends FxControl {
 	private GridPane createGridPane() {
 		GridPane gridPane = new GridPane();
 		
-		gridPane.setPadding(new Insets(50, 0, 0, 0));
+		gridPane.setPadding(new Insets(24, 0, 0, 0));
 		RowConstraints topRowConstraints = new RowConstraints();
 		topRowConstraints.setPercentHeight(5);
 		RowConstraints midRowConstraints = new RowConstraints();
 		midRowConstraints.setPercentHeight(95);
 		gridPane.getRowConstraints().addAll(topRowConstraints,midRowConstraints);
 
-		ColumnConstraints columnConstraint1 = new ColumnConstraints();
-		columnConstraint1.setPercentWidth(15);
+		// fixed-width modality rail, capture panel next to it (no dead gap between them)
+		ColumnConstraints columnConstraint1 = new ColumnConstraints(152, 152, 152);
 		ColumnConstraints columnConstraint2 = new ColumnConstraints();
-		columnConstraint2.setPercentWidth(80);
-		ColumnConstraints columnConstraint3 = new ColumnConstraints();
-		columnConstraint3.setPercentWidth(5);
+		columnConstraint2.setHgrow(Priority.ALWAYS);
+		ColumnConstraints columnConstraint3 = new ColumnConstraints(0, 0, 0);
 		gridPane.getColumnConstraints().addAll(columnConstraint1, columnConstraint2,columnConstraint3);
 		return gridPane;
 	}

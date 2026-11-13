@@ -111,51 +111,126 @@ input[type="radio"]:checked + label:before {
 	border-color: #4A2BC2 !important;
 }
 
-/* --- Dashboard ----------------------------------------------------------- */
+/* --- Dashboard ---------------------------------------------------------------
+   The template floats fixed-width boxes left; re-lay it out as a grid:
+   [ KPI | KPI | KPI ]  full width
+   [ Users | Sync activities ]  two equal columns */
+html:has(.buttons-column), body:has(.buttons-column) {
+	background-color: #EEEDF4 !important;
+}
+
 header {
 	text-align: left !important;
-	padding: 24px 24px 8px 24px !important;
+	padding: 32px 40px 20px 40px !important;
 }
 
 header h2 {
-	font-size: 22px !important;
+	font-size: 24px !important;
+	font-weight: 600 !important;
 	margin: 0 !important;
 }
 
-.row {
-	padding: 0 14px;
+body > .row {
+	display: grid !important;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	grid-template-areas: "kpi kpi" "users activity";
+	gap: 24px;
+	padding: 0 40px 40px 40px !important;
+	align-items: start;
 }
 
-.column {
-	background-color: #FFFFFF !important;
+body > .row:after { display: none !important; }
+
+body > .row > .buttons-column {
+	grid-area: kpi;
+	float: none !important;
+	width: auto !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+body > .row > .column:first-child { grid-area: users; }
+body > .row > .column:last-child { grid-area: activity; }
+
+body > .row > .column {
+	float: none !important;
+	width: auto !important;
+	margin: 0 !important;
+	overflow: visible !important;
+	background-color: #FBFBFD !important;
 	border: 1px solid #E4E2EC !important;
-	border-radius: 12px !important;
-	padding: 16px 20px !important;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.04);
+	border-radius: 14px !important;
+	padding: 24px !important;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 16px rgba(0, 0, 0, 0.04);
 }
 
 .column h3, .column h4 {
-	color: #24145C !important;
-	font-size: 14px !important;
-	margin: 4px 0 10px 0 !important;
+	color: #171717 !important;
+	font-size: 16px !important;
+	font-weight: 600 !important;
+	margin: 0 0 12px 0 !important;
 }
 
+.column table {
+	width: 100% !important;
+	border-collapse: collapse;
+}
+
+.column table table td {
+	padding: 10px 0 !important;
+	border-bottom: 1px solid #EEEDF4;
+	vertical-align: middle;
+}
+
+.column table table tr:last-child td { border-bottom: 0; }
+
+.column table table td + td {
+	text-align: right;
+	color: #737373 !important;
+	white-space: nowrap;
+	padding-left: 16px !important;
+}
+
+.column > table.tablecss > tbody > tr > td {
+	padding: 10px 0 !important;
+	border-bottom: 1px solid #EEEDF4;
+	vertical-align: middle;
+}
+
+.column > table.tablecss > tbody > tr:last-child > td { border-bottom: 0; }
+
+/* KPI tiles: equal width, full row */
+.buttons-column > .row {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 24px;
+	padding: 0 !important;
+}
+
+.buttons-column > .row:after { display: none !important; }
+
 .column-rect {
-	border-radius: 12px !important;
+	float: none !important;
+	width: auto !important;
 	height: auto !important;
-	min-height: 104px;
-	padding: 16px 12px !important;
-	color: #171717 !important;
+	margin: 0 !important;
+	padding: 24px !important;
+	border-radius: 14px !important;
 	border: 1px solid transparent;
+	text-align: left !important;
+	color: #404040 !important;
 }
 
 .column-rect h2 {
-	font-size: 32px !important;
-	margin: 0 0 4px 0 !important;
+	font-size: 36px !important;
+	font-weight: 600 !important;
+	line-height: 1.1 !important;
+	margin: 0 0 6px 0 !important;
 }
 
 .column-rect p {
-	font-size: 12px !important;
+	display: block !important;
+	font-size: 14px !important;
 	font-weight: 500;
 	margin: 0 !important;
 }
@@ -178,10 +253,6 @@ header h2 {
 	border-color: #FFD3D6;
 }
 .buttons-column .row .column-rect:nth-child(3) h2 { color: #DB372D !important; }
-
-.buttons-column .row {
-	padding: 0;
-}
 
 /* --- Scrollbars inside template views ------------------------------------ */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
