@@ -784,7 +784,10 @@ public class GenericController extends BaseController {
 		ProgressBar progress = new ProgressBar(0);
 		progress.setMaxWidth(Double.MAX_VALUE);
 		progress.getStyleClass().add("stepProgressBar");
-		Label progressLabel = new Label();
+		// one label per word / number: JavaFX misplaces spaces next to digits inside right-to-left text, while an
+		// HBox of tokens mirrors correctly ("Step 2 of 6" / "الخطوة 2 من 6")
+		HBox progressLabel = new HBox();
+		progressLabel.setId("stepProgressText");
 		progressLabel.getStyleClass().add("stepProgressLabel");
 		stepRail.getChildren().addAll(steps, progress, progressLabel);
 		refreshStepRail(tabPane);
@@ -824,10 +827,11 @@ public class GenericController extends BaseController {
 			}
 		}
 		ProgressBar progress = (ProgressBar) stepRail.getChildren().get(1);
-		Label progressLabel = (Label) stepRail.getChildren().get(2);
+		HBox progressLabel = (HBox) stepRail.getChildren().get(2);
 		int position = Math.max(selected, 0) + 1;
 		progress.setProgress(count <= 1 ? 1.0 : (double) (position - 1) / (count - 1));
-		progressLabel.setText(MessageFormat.format(getLabelOrDefault(STEP_PROGRESS_KEY, "{0} / {1}"), position, count));
+		String progressText = MessageFormat.format(getLabelOrDefault(STEP_PROGRESS_KEY, "{0} / {1}"), position, count);
+		setTokenizedText(progressLabel, progressText, "stepProgressToken");
 	}
 
 	public void populateScreens() throws Exception {

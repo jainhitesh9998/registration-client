@@ -107,7 +107,9 @@ public class DropDownFxControl extends FxControl {
 			labels.add(this.uiFieldDTO.getLabel().get(lCode));
 		});
 
-		String titleText = String.join(RegistrationConstants.SLASH, labels) + getMandatorySuffix(uiFieldDTO);
+		String titleText = primaryLabel(labels) + getMandatorySuffix(uiFieldDTO);
+		simpleTypeVBox.getChildren().add(simpleTypeVBox.getChildren().indexOf(fieldTitle) + 1,
+				secondaryLabels(fieldName, labels));
 		ComboBox<GenericDto> comboBox = getComboBox(fieldName, titleText, RegistrationConstants.DOC_COMBO_BOX,
 				simpleTypeVBox.getPrefWidth(), false);
 		simpleTypeVBox.getChildren().add(comboBox);

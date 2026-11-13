@@ -167,7 +167,7 @@
          <children>
             <VBox alignment="CENTER_LEFT" styleClass="pageActionBarText" HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="decisionSummaryLbl" styleClass="pageActionBarSummary" />
+                  <HBox fx:id="decisionSummaryLbl" styleClass="pageActionBarSummary" />
                   <Label styleClass="pageActionBarNote" text="%approved/rejected" wrapText="true" />
                </children>
             </VBox>

@@ -293,6 +293,53 @@ public abstract class FxControl  {
 		return true;
 	}
 
+	/**
+	 * Field title for the applicant's data-entry languages: the label in the first selected language (falls back to
+	 * the next language that has one). With several languages the other labels are shown by
+	 * {@link #secondaryLabels(String, List)} instead of being joined into the title.
+	 */
+	protected String primaryLabel(List<String> labels) {
+		if (labels == null || labels.isEmpty()) {
+			return "";
+		}
+		return labels.stream().filter(label -> label != null && !label.isBlank()).findFirst().orElse("");
+	}
+
+	/**
+	 * Muted caption with the field's label in the other selected languages (" · " separated, without repeats of the
+	 * title). Collapsed when there is nothing to show, e.g. a single data-entry language.
+	 */
+	protected javafx.scene.layout.FlowPane secondaryLabels(String fieldId, List<String> labels) {
+		String primary = primaryLabel(labels);
+		List<String> others = new java.util.ArrayList<>();
+		if (labels != null) {
+			for (int i = 1; i < labels.size(); i++) {
+				String label = labels.get(i);
+				if (label != null && !label.isBlank() && !label.equals(primary) && !others.contains(label)) {
+					others.add(label);
+				}
+			}
+		}
+		// one node per language (and separator): mixing scripts in one Label loses spaces around right-to-left text
+		javafx.scene.layout.FlowPane caption = new javafx.scene.layout.FlowPane();
+		caption.setId(fieldId + "SecondaryLabels");
+		caption.getStyleClass().add("fieldSecondaryLabels");
+		caption.setHgap(6);
+		for (int i = 0; i < others.size(); i++) {
+			if (i > 0) {
+				Label separator = new Label("\u00B7");
+				separator.getStyleClass().add("fieldSecondaryLabel");
+				caption.getChildren().add(separator);
+			}
+			Label label = new Label(others.get(i));
+			label.getStyleClass().add("fieldSecondaryLabel");
+			caption.getChildren().add(label);
+		}
+		caption.setVisible(!others.isEmpty());
+		caption.setManaged(!others.isEmpty());
+		return caption;
+	}
+
 	protected void changeNodeOrientation(Node node, String langCode) {
 
 		if (ApplicationContext.getInstance().isLanguageRightToLeft(langCode)) {

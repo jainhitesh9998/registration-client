@@ -4470,6 +4470,10 @@ Working on new Css by taleev
 
 .stepProgressLabel {
 	-fx-padding: 0 12 0 12;
+	-fx-spacing: 4;
+}
+
+.stepProgressLabel > .stepProgressToken {
 	-fx-font-size: 12px;
 	-fx-text-fill: #5C5C66;
 }
@@ -4600,6 +4604,10 @@ Working on new Css by taleev
 }
 
 .pageActionBarSummary {
+	-fx-spacing: 4;
+}
+
+.pageActionBarSummary > .pageActionBarSummaryToken {
 	-fx-font-family: 'Noto Sans SemiBold';
 	-fx-font-size: 14px;
 	-fx-text-fill: -mx-text;
@@ -4773,4 +4781,107 @@ Working on new Css by taleev
 	-fx-background-color: -mx-primary-soft;
 	-fx-background-radius: 999;
 	-fx-padding: 4 12 4 12;
+}
+
+/* --- Multi-language text field: one grouped control, a row per data-entry language ----------------
+   [ language tag | input (placeholder = field name in that language) | keyboard ]; two groups per row */
+.multiLangGroup {
+	-fx-background-color: -mx-control-border, -mx-field;
+	-fx-background-insets: 0, 1;
+	-fx-background-radius: 8, 7;
+	-fx-pref-width: 452px;
+	-fx-min-width: 452px;
+	-fx-max-width: 452px;
+}
+
+.multiLangRow {
+	-fx-border-color: transparent transparent -mx-border-subtle transparent;
+	-fx-border-width: 0 0 1 0;
+	-fx-border-insets: 0 1 0 1;
+}
+
+.multiLangRow.multiLangRowLast {
+	-fx-border-width: 0;
+}
+
+.multiLangRow > .langTag {
+	-fx-pref-width: 76px;
+	-fx-min-width: 76px;
+	-fx-max-width: 76px;
+	-fx-pref-height: 44px;
+	-fx-min-height: 44px;
+	-fx-padding: 0 8 0 12;
+	-fx-alignment: center-left;
+	-fx-font-family: 'Noto Sans SemiBold';
+	-fx-font-size: 12px;
+	-fx-text-fill: -mx-text-secondary;
+	-fx-background-color: -mx-surface-muted;
+	-fx-background-insets: 1 0 0 1;
+	-fx-border-color: transparent -mx-border-subtle transparent transparent;
+	-fx-border-width: 0 1 0 0;
+}
+
+.multiLangRow.multiLangRowFirst > .langTag {
+	-fx-background-radius: 7 0 0 0;
+}
+
+.multiLangRow.multiLangRowLast > .langTag {
+	-fx-background-radius: 0 0 0 7;
+	-fx-background-insets: 0 0 1 1;
+}
+
+.multiLangRow.multiLangRowFirst.multiLangRowLast > .langTag {
+	-fx-background-radius: 7 0 0 7;
+}
+
+.multiLangGroup .multiLangRow > .text-input,
+.multiLangGroup .multiLangRow > .demoGraphicTextField,
+.multiLangGroup .multiLangRow > .demoGraphicTextFieldOnType,
+.multiLangGroup .multiLangRow > .demoGraphicTextFieldFocused {
+	-fx-pref-width: 332px;
+	-fx-min-width: 120px;
+	-fx-max-width: Infinity;
+	-fx-pref-height: 44px;
+	-fx-min-height: 44px;
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-background-radius: 0;
+	-fx-padding: 0 12 0 12;
+}
+
+.multiLangGroup .multiLangRow > .text-input:focused {
+	-fx-background-color: -mx-primary-soft;
+}
+
+/* invalid row: tinted, the group border stays calm */
+.multiLangGroup .multiLangRow > .demoGraphicTextFieldFocused,
+.multiLangGroup .multiLangRow > .demoGraphicTextFieldFocused:focused {
+	-fx-background-color: -mx-danger-soft;
+}
+
+.multiLangGroup .multiLangRow > .iconsHBox {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-background-radius: 0;
+	-fx-border-color: transparent transparent transparent -mx-border-subtle;
+	-fx-border-width: 0 0 0 1;
+}
+
+.multiLangGroup .multiLangRow > .iconsHBox:hover {
+	-fx-background-color: -mx-primary-soft;
+}
+
+.multiLangFeedback {
+	-fx-spacing: 2;
+	-fx-padding: 4 0 0 0;
+}
+
+/* field name in the other selected data-entry languages, under the title */
+.fieldSecondaryLabels {
+	-fx-padding: -4 0 0 0;
+}
+
+.fieldSecondaryLabels > .fieldSecondaryLabel {
+	-fx-font-size: 12px;
+	-fx-text-fill: -mx-text-muted;
 }

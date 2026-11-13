@@ -873,6 +873,23 @@ public class BaseController {
 	 * @param fallback value used when the bundle has no such key
 	 * @return the label text
 	 */
+	/**
+	 * Shows text as one label per word / number. JavaFX misplaces the spaces next to digits inside right-to-left
+	 * text ("الخطوة 2 من 6" renders as "الخطوة2 من6"); a box of tokens is mirrored as a whole and reads correctly in
+	 * both directions.
+	 */
+	protected void setTokenizedText(javafx.scene.layout.Pane box, String text, String tokenStyleClass) {
+		box.getChildren().clear();
+		if (text == null || text.isBlank()) {
+			return;
+		}
+		for (String token : text.trim().split("\\s+")) {
+			javafx.scene.control.Label word = new javafx.scene.control.Label(token);
+			word.getStyleClass().add(tokenStyleClass);
+			box.getChildren().add(word);
+		}
+	}
+
 	protected String getLabelOrDefault(String key, String fallback) {
 		try {
 			ResourceBundle labels = ApplicationContext.getBundle(ApplicationContext.applicationLanguage(),

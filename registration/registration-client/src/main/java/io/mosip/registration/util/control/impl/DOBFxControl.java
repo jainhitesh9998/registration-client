@@ -79,8 +79,9 @@ public class DOBFxControl extends FxControl {
 
 		/** DOB Label */
 		ageVBox.getChildren().add(getLabel(uiFieldDTO.getId() + RegistrationConstants.LABEL,
-				String.join(RegistrationConstants.SLASH, labels) + mandatorySuffix,
+				primaryLabel(labels) + mandatorySuffix,
 				RegistrationConstants.DEMOGRAPHIC_FIELD_LABEL, true, ageVBox.getWidth()));
+		ageVBox.getChildren().add(secondaryLabels(uiFieldDTO.getId(), labels));
 
 		/** Add Date */
 		dobHBox.getChildren().add(addDateTextField(uiFieldDTO, RegistrationConstants.DD,

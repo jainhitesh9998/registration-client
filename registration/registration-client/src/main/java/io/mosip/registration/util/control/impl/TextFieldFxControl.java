@@ -45,6 +45,8 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -152,7 +154,9 @@ public class TextFieldFxControl extends FxControl {
 		TextField textField = (TextField) node;
 
 		textField.textProperty().addListener((observable, oldValue, newValue) -> {
-			if (uiFieldDTO.isTransliterate()) {
+			// only the operator's own input is transliterated; text written by transliteration must not cascade
+			// into further transliteration of the other languages (it overwrote values derived from the input)
+			if (uiFieldDTO.isTransliterate() && !transliterating) {
 				transliterate(textField, textField.getId().substring(textField.getId().length() - RegistrationConstants.LANGCODE_LENGTH, textField.getId().length()));
 			}
 			if (isValid()) {				
@@ -190,12 +194,27 @@ public class TextFieldFxControl extends FxControl {
 		VBox vBox = new VBox();
 		vBox.setPrefWidth(simpleTypeVBox.getPrefWidth());
 		List<String> labels = new ArrayList<>();
+		List<String> selectedLanguages = getRegistrationDTo().getSelectedLanguagesByApplicant();
+		// More than one data-entry language: one grouped control with a row per language (language tag, input,
+		// keyboard), and the per-language messages / blocklist links collected under the group
+		boolean multiLanguage = RegistrationConstants.SIMPLE_TYPE.equals(this.uiFieldDTO.getType())
+				&& selectedLanguages.size() > 1;
+		VBox languageGroup = new VBox();
+		languageGroup.getStyleClass().add(MULTI_LANG_GROUP_CLASS);
+		VBox feedback = new VBox();
+		feedback.getStyleClass().add(MULTI_LANG_FEEDBACK_CLASS);
+		VBox rowTarget = multiLanguage ? languageGroup : vBox;
+		VBox feedbackTarget = multiLanguage ? feedback : vBox;
 		switch (this.uiFieldDTO.getType()) {
 			case RegistrationConstants.SIMPLE_TYPE :
-				getRegistrationDTo().getSelectedLanguagesByApplicant().forEach(langCode -> {
+				selectedLanguages.forEach(langCode -> {
 					labels.add(this.uiFieldDTO.getLabel().get(langCode));
-					vBox.getChildren().add(createTextBox(langCode,true));
-					vBox.getChildren().add(collapseWhenHidden(getLabel(uiFieldDTO.getId() + langCode + RegistrationConstants.MESSAGE, null,
+					HBox textBox = createTextBox(langCode, true);
+					if (multiLanguage) {
+						decorateLanguageRow(textBox, langCode, selectedLanguages);
+					}
+					rowTarget.getChildren().add(textBox);
+					feedbackTarget.getChildren().add(collapseWhenHidden(getLabel(uiFieldDTO.getId() + langCode + RegistrationConstants.MESSAGE, null,
 							RegistrationConstants.DemoGraphicFieldMessageLabel, false, simpleTypeVBox.getPrefWidth())));
 					
 					HBox hyperLinkHBox = new HBox();
@@ -217,8 +236,11 @@ public class TextFieldFxControl extends FxControl {
 											.getBundle(langCode, RegistrationConstants.LABELS).getString("reject_word"),
 									RegistrationConstants.DemoGraphicFieldMessageLabel, true));
 
-					vBox.getChildren().add(collapseWhenHidden(hyperLinkHBox));
+					feedbackTarget.getChildren().add(collapseWhenHidden(hyperLinkHBox));
 				});
+				if (multiLanguage) {
+					vBox.getChildren().addAll(languageGroup, feedback);
+				}
 				break;
 			default:
 				String langCode = getRegistrationDTo().getSelectedLanguagesByApplicant().get(0);
@@ -250,7 +272,11 @@ public class TextFieldFxControl extends FxControl {
 				break;
 		}
 
-		fieldTitle.setText(String.join(RegistrationConstants.SLASH, labels)	+ getMandatorySuffix(uiFieldDTO));
+		// with a row per language the rows carry the language; the title is the field name in the first language
+		String title = multiLanguage && this.uiFieldDTO.getLabel().get(selectedLanguages.get(0)) != null
+				? this.uiFieldDTO.getLabel().get(selectedLanguages.get(0))
+				: String.join(RegistrationConstants.SLASH, labels);
+		fieldTitle.setText(title + getMandatorySuffix(uiFieldDTO));
 		simpleTypeVBox.getChildren().add(vBox);
 		return simpleTypeVBox;
 	}
@@ -306,6 +332,45 @@ public class TextFieldFxControl extends FxControl {
 			});
 		}
 		return hyperLink;
+	}
+
+	private static final String MULTI_LANG_GROUP_CLASS = "multiLangGroup";
+	private static final String MULTI_LANG_FEEDBACK_CLASS = "multiLangFeedback";
+
+	/**
+	 * Turns a language's input row into a row of the grouped multi-language control: a leading tag with the
+	 * language's own name, and the field name in that language as placeholder, so a filled-in row still says which
+	 * language it holds.
+	 */
+	private void decorateLanguageRow(HBox textBox, String langCode, List<String> selectedLanguages) {
+		textBox.getStyleClass().add("multiLangRow");
+		int index = selectedLanguages.indexOf(langCode);
+		if (index == 0) {
+			textBox.getStyleClass().add("multiLangRowFirst");
+		}
+		if (index == selectedLanguages.size() - 1) {
+			textBox.getStyleClass().add("multiLangRowLast");
+		}
+		java.util.ResourceBundle bundle = io.mosip.registration.context.ApplicationContext.getBundle(langCode,
+				RegistrationConstants.LABELS);
+		Label tag = new Label(bundle != null && bundle.containsKey("language") ? bundle.getString("language") : langCode);
+		tag.setId(uiFieldDTO.getId() + langCode + "LanguageTag");
+		tag.getStyleClass().add("langTag");
+		tag.setMinWidth(Region.USE_PREF_SIZE);
+		textBox.getChildren().add(0, tag);
+		// every row is laid out in the screen's direction so tags line up; the input itself follows its language
+		textBox.setNodeOrientation(javafx.geometry.NodeOrientation.INHERIT);
+		Node input = textBox.lookup("#" + uiFieldDTO.getId() + langCode);
+		if (input != null) {
+			input.setNodeOrientation(io.mosip.registration.context.ApplicationContext.getInstance()
+					.isLanguageRightToLeft(langCode) ? javafx.geometry.NodeOrientation.RIGHT_TO_LEFT
+							: javafx.geometry.NodeOrientation.LEFT_TO_RIGHT);
+		}
+		String localizedLabel = uiFieldDTO.getLabel() != null ? uiFieldDTO.getLabel().get(langCode) : null;
+		if (input instanceof TextField && localizedLabel != null && !localizedLabel.isBlank()) {
+			((TextField) input).setPromptText(localizedLabel);
+			HBox.setHgrow(input, Priority.ALWAYS);
+		}
 	}
 
 	private HBox createTextBox(String langCode, boolean isSimpleType) {
@@ -449,7 +514,19 @@ public class TextFieldFxControl extends FxControl {
 		});
 	}
 
+	/** true while transliteration writes the other languages' fields */
+	private boolean transliterating;
+
 	private void transliterate(TextField textField, String langCode) {
+		transliterating = true;
+		try {
+			transliterateOtherLanguages(textField, langCode);
+		} finally {
+			transliterating = false;
+		}
+	}
+
+	private void transliterateOtherLanguages(TextField textField, String langCode) {
 		List<String> langCodes = getRegistrationDTo().getSelectedLanguagesByApplicant();
 		for (String langCodeToBeTransliterated : langCodes.subList(1, langCodes.size())) {
 			if (!langCodeToBeTransliterated.equalsIgnoreCase(langCode)) {

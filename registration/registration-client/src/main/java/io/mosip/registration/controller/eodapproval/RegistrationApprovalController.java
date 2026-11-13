@@ -64,6 +64,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
@@ -179,7 +180,7 @@ public class RegistrationApprovalController extends BaseController implements In
 	private Label reviewDecision;
 
 	@FXML
-	private Label decisionSummaryLbl;
+	private HBox decisionSummaryLbl;
 
 	private static final String DECISION_APPROVED_CLASS = "decisionApproved";
 	private static final String DECISION_REJECTED_CLASS = "decisionRejected";
@@ -402,9 +403,9 @@ public class RegistrationApprovalController extends BaseController implements In
 				rejectedCountLbl.setText(String.valueOf(rejected));
 			}
 			if (decisionSummaryLbl != null) {
-				decisionSummaryLbl.setText(total == 0 ? RegistrationConstants.EMPTY
+				setTokenizedText(decisionSummaryLbl, total == 0 ? RegistrationConstants.EMPTY
 						: MessageFormat.format(getLabelOrDefault("approvalDecidedSummary", "{0} / {1}"),
-								approved + rejected, total));
+								approved + rejected, total), "pageActionBarSummaryToken");
 				decisionSummaryLbl.setVisible(total > 0);
 				decisionSummaryLbl.setManaged(total > 0);
 			}

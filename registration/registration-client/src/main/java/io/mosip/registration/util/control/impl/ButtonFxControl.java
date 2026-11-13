@@ -81,10 +81,11 @@ public class ButtonFxControl extends FxControl {
 			labels.add(this.uiFieldDTO.getLabel().get(lCode));
 		});
 
-		fieldTitle.setText(String.join(RegistrationConstants.SLASH, labels)	+ getMandatorySuffix(uiFieldDTO));
+		fieldTitle.setText(primaryLabel(labels) + getMandatorySuffix(uiFieldDTO));
 		// label above the options, like every other field; the HBox holds only the option buttons
 		simpleTypeVBox.setSpacing(6);
 		simpleTypeVBox.getChildren().add(fieldTitle);
+		simpleTypeVBox.getChildren().add(secondaryLabels(fieldName, labels));
 		simpleTypeVBox.getChildren().add(hbox);
 		simpleTypeVBox.getChildren().add(getLabel(uiFieldDTO.getId() + RegistrationConstants.ERROR_MSG, null,
 				RegistrationConstants.DemoGraphicFieldMessageLabel, false, simpleTypeVBox.getPrefWidth()));
